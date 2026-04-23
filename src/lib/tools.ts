@@ -142,6 +142,13 @@ export const tools: ToolItem[] = [
     keyword: "days between dates",
   },
   {
+    slug: "days-from-today",
+    name: "Days From Today Calculator",
+    summary: "Add or subtract calendar or business days from any date instantly.",
+    category: "date-time",
+    keyword: "days from today",
+  },
+  {
     slug: "time-zone-converter",
     name: "Time Zone Meeting Planner",
     summary: "Find overlap meeting windows across U.S. and global time zones.",
@@ -175,6 +182,13 @@ export const tools: ToolItem[] = [
     summary: "Estimate monthly payment, total interest, and total repayment.",
     category: "converters",
     keyword: "loan payment calculator",
+  },
+  {
+    slug: "paycheck-calculator",
+    name: "Paycheck Calculator",
+    summary: "Estimate gross pay, taxes, and take-home pay for each paycheck.",
+    category: "converters",
+    keyword: "paycheck calculator",
   },
   {
     slug: "sales-tax-calculator",

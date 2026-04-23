@@ -8,6 +8,7 @@ import { BmiCalculatorTool } from "@/components/bmi-calculator-tool";
 import { CaseConverterTool } from "@/components/case-converter-tool";
 import { CharacterCounterTool } from "@/components/character-counter-tool";
 import { CurrencyConverterTool } from "@/components/currency-converter-tool";
+import { DaysFromTodayTool } from "@/components/days-from-today-tool";
 import { DaysBetweenDatesTool } from "@/components/days-between-dates-tool";
 import { DiscountTaxCalculatorTool } from "@/components/discount-tax-calculator-tool";
 import { ExcelToPdfTool } from "@/components/excel-to-pdf-tool";
@@ -23,6 +24,7 @@ import { Md5Tool } from "@/components/md5-tool";
 import { MarkupMarginCalculatorTool } from "@/components/markup-margin-calculator-tool";
 import { MergePdfTool } from "@/components/merge-pdf-tool";
 import { PercentageCalculatorTool } from "@/components/percentage-calculator-tool";
+import { PaycheckCalculatorTool } from "@/components/paycheck-calculator-tool";
 import { PdfToJpgTool } from "@/components/pdf-to-jpg-tool";
 import { PdfSummarizerTool } from "@/components/pdf-summarizer-tool";
 import { PngToJpgTool } from "@/components/png-to-jpg-tool";
@@ -37,7 +39,7 @@ import { TipCalculatorTool } from "@/components/tip-calculator-tool";
 import { UnitConverterTool } from "@/components/unit-converter-tool";
 import { WaterIntakeCalculatorTool } from "@/components/water-intake-calculator-tool";
 import { WordCounterTool } from "@/components/word-counter-tool";
-import { categoryLabels, getToolBySlug, getToolsByCategory, tools } from "@/lib/tools";
+import { categoryLabels, getToolBySlug, getToolsByCategory, tools, type ToolItem } from "@/lib/tools";
 
 type ToolPageProps = {
   params: Promise<{ slug: string }>;
@@ -88,6 +90,198 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
   };
 }
 
+type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+const categoryTips: Record<ToolItem["category"], string> = {
+  "file-tools":
+    "For file tools, start with a small sample file first, confirm output quality, then process larger files. This helps avoid repeated work and makes your workflow more predictable.",
+  "text-tools":
+    "For text tools, paste a representative input sample and validate formatting before batch use. Small preview checks can prevent downstream issues in SQL, scripts, documents, and publishing workflows.",
+  "date-time":
+    "For date and time tools, verify timezone and boundary assumptions up front. A quick check on start/end rules helps prevent subtle scheduling and reporting mistakes.",
+  converters:
+    "For converter tools, always double-check units and rounding expectations. Consistent input assumptions make financial and measurement outputs easier to trust and compare.",
+  health:
+    "For health tools, use them as quick estimates and trend references. For medical decisions, always validate with professional guidance and your local standards.",
+};
+
+function buildUsageGuide(tool: ToolItem, categoryName: string): string[] {
+  return [
+    `${tool.name} is designed for fast, practical results when you need to complete a task without opening heavy software. Start by preparing clean input values and reviewing field labels before calculation or conversion. This reduces rework and gives you more reliable output on the first pass. If your workflow is repetitive, keep a standard input template so every run follows the same logic and quality checks.`,
+    `A good workflow is to run one quick trial first, validate the output visually, then process full data. For example, if you are working with business numbers, compare a known value to confirm assumptions before using final results. If you are working with files or text, review formatting and edge cases early. This staged approach is simple, but it prevents most mistakes that happen during rushed online tool usage.`,
+    `On mobile and desktop, this tool is optimized for speed and clarity. You can complete the flow in a few steps, then copy or download the result for your next task. If output does not look right, check input units, separators, and selected mode first. Most issues come from mismatched formats, not from the tool itself. Correcting those inputs usually fixes the result immediately.`,
+    `${categoryTips[tool.category]} In many teams, this saves time because people can align on one quick method instead of redoing the same work in multiple apps. It also improves consistency when several people handle similar tasks across marketing, operations, finance, or content workflows.`,
+    `UsefulKit keeps this ${categoryName.toLowerCase()} utility free and straightforward so you can focus on execution. For best results, treat this page as both a calculator and a checkpoint: enter data carefully, verify key outputs, and keep a record of important runs if the result affects decisions. This habit gives you speed today and better traceability later.`,
+  ];
+}
+
+function buildFaqItems(tool: ToolItem): FaqItem[] {
+  const categoryFaq: Record<ToolItem["category"], FaqItem[]> = {
+    "file-tools": [
+      {
+        question: `What file types does ${tool.name} support?`,
+        answer:
+          "Supported types depend on the specific tool flow shown on this page. Upload controls list accepted formats before processing.",
+      },
+      {
+        question: "Are my uploaded files stored on your server?",
+        answer:
+          "Most file workflows are processed in-browser. If any tool behavior differs, the page notes will clearly explain it.",
+      },
+    ],
+    "text-tools": [
+      {
+        question: `Can I use ${tool.name.toLowerCase()} for bulk text cleanup?`,
+        answer:
+          "Yes. Start with a sample block first, verify output format, then run larger text batches for consistent results.",
+      },
+      {
+        question: "Will formatting and line breaks be preserved?",
+        answer:
+          "That depends on the chosen action. Always preview the result before copying if formatting is business-critical.",
+      },
+    ],
+    "date-time": [
+      {
+        question: `How do I avoid date and timezone mistakes in ${tool.name}?`,
+        answer:
+          "Confirm timezone and boundary options first, then test one known date scenario before final use.",
+      },
+      {
+        question: "Can I use this on mobile while planning schedules?",
+        answer:
+          "Yes. Date and time tool pages are responsive and optimized for quick checks on phones and desktop.",
+      },
+    ],
+    converters: [
+      {
+        question: `Is ${tool.name} suitable for quick business calculations?`,
+        answer:
+          "Yes. It is useful for fast estimates. For contracts, taxes, or compliance workflows, validate with your official process.",
+      },
+      {
+        question: "How can I get more reliable conversion results?",
+        answer:
+          "Use consistent units, verify mode selection, and test with one known example before processing full inputs.",
+      },
+    ],
+    health: [
+      {
+        question: `Are ${tool.name.toLowerCase()} results medical advice?`,
+        answer:
+          "No. Health tools provide estimates for education and planning, not diagnosis or treatment recommendations.",
+      },
+      {
+        question: "Can I track trends over time with these tools?",
+        answer:
+          "Yes. Repeating calculations with consistent inputs can help track changes and support routine wellness planning.",
+      },
+    ],
+  };
+
+  const slugFaq: Partial<Record<ToolItem["slug"], FaqItem[]>> = {
+    "excel-to-pdf": [
+      {
+        question: "What are the Excel to PDF limits in this tool?",
+        answer:
+          "Current browser-side limits are up to 2,000 rows and 30 columns per sheet for stable export performance.",
+      },
+      {
+        question: "Can I choose which worksheet to export?",
+        answer:
+          "Yes. After upload, you can select a worksheet and preview rows before generating the PDF.",
+      },
+    ],
+    "pdf-summarizer": [
+      {
+        question: "How many pages can PDF Summarizer analyze?",
+        answer:
+          "The summarizer is optimized for practical speed and currently analyzes up to 40 pages per document.",
+      },
+    ],
+    "pdf-to-jpg": [
+      {
+        question: "Can I adjust image quality in PDF to JPG?",
+        answer:
+          "Yes. Use the JPG quality slider before conversion to balance image clarity and file size.",
+      },
+    ],
+    "currency-converter": [
+      {
+        question: "Where do currency rates come from?",
+        answer:
+          "The tool uses configured reference rates in the interface. You can adjust rates when needed for planning scenarios.",
+      },
+    ],
+    "loan-payment-calculator": [
+      {
+        question: "Is this loan result exact for my lender?",
+        answer:
+          "Results are estimates based on entered assumptions. Lender fees, insurance, and policy differences can change final numbers.",
+      },
+    ],
+    "md5-tool": [
+      {
+        question: "Can this MD5 tool decrypt hashes?",
+        answer:
+          "No. MD5 is a one-way hash function. This page supports hash generation and input verification only.",
+      },
+    ],
+    "ev-charging-cost-calculator": [
+      {
+        question: "Do state selections affect EV charging estimates?",
+        answer:
+          "Yes. State selection changes default electricity assumptions, which directly affects estimated charging cost.",
+      },
+    ],
+    "subscription-waste-finder": [
+      {
+        question: "What columns should my CSV include?",
+        answer:
+          "Use typical bank/card exports with date, description or merchant, and debit/credit amount fields for best detection quality.",
+      },
+    ],
+  };
+
+  const commonFaq: FaqItem[] = [
+    {
+      question: `Is ${tool.name} free to use?`,
+      answer: `Yes. ${tool.name} on UsefulKit is free and does not require account signup.`,
+    },
+    {
+      question: `Can I use ${tool.name.toLowerCase()} on mobile?`,
+      answer:
+        "Yes. The page is responsive and supports modern mobile browsers, including iOS and Android devices.",
+    },
+    {
+      question: "Are my files or text uploaded to a server?",
+      answer:
+        "Most tools process data directly in the browser. For any tool with different behavior, the page notes will clearly explain it.",
+    },
+    {
+      question: "How do I get more accurate results?",
+      answer:
+        "Use clean inputs, confirm units and mode selection, and test with one known example before running full data.",
+    },
+    {
+      question: "Can I use this result for business or compliance work?",
+      answer:
+        "You can use it as a fast estimate or workflow aid, but for high-stakes decisions you should validate with your official process.",
+    },
+  ];
+
+  const merged = [
+    ...(slugFaq[tool.slug] ?? []),
+    ...categoryFaq[tool.category],
+    ...commonFaq,
+  ];
+
+  return merged.slice(0, 6);
+}
+
 export default async function ToolPage({ params }: ToolPageProps) {
   const { slug } = await params;
   const tool = getToolBySlug(slug);
@@ -96,35 +290,19 @@ export default async function ToolPage({ params }: ToolPageProps) {
   }
 
   const relatedTools = getToolsByCategory(tool.category).filter((item) => item.slug !== tool.slug);
+  const usageGuide = buildUsageGuide(tool, categoryLabels[tool.category]);
+  const faqItems = buildFaqItems(tool);
   const faqData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: `Is this ${tool.name.toLowerCase()} free?`,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: `Yes. UsefulKit offers ${tool.name} for free with no signup required.`,
-        },
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
       },
-      {
-        "@type": "Question",
-        name: "Can I use it on mobile?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Yes. UsefulKit tools are designed to work on desktop and mobile browsers.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "How accurate are the results?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Results are based on transparent formulas or deterministic processing steps.",
-        },
-      },
-    ],
+    })),
   };
 
   const softwareAppData = {
@@ -171,6 +349,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Select start and end dates.",
               "Toggle whether to include boundary dates.",
               "Get total days and week-plus-day breakdown.",
+            ]
+        : tool.slug === "days-from-today"
+          ? [
+              "Choose a base date and enter positive or negative day offset.",
+              "Switch between calendar days and business days.",
+              "Get the exact target date with instant update.",
             ]
         : tool.slug === "markup-margin-calculator"
           ? [
@@ -237,6 +421,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Enter loan amount, annual interest rate, and loan term.",
               "UsefulKit calculates your estimated monthly payment instantly.",
               "Review total repayment, total interest, and first-month breakdown.",
+            ]
+        : tool.slug === "paycheck-calculator"
+          ? [
+              "Select salary or hourly mode and set pay frequency.",
+              "Enter pre-tax deduction and tax rate assumptions.",
+              "Review estimated gross, tax breakdown, and take-home pay per paycheck.",
             ]
         : tool.slug === "sales-tax-calculator"
           ? [
@@ -395,6 +585,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "pdf-summarizer" ? <PdfSummarizerTool /> : null}
       {tool.slug === "excel-to-pdf" ? <ExcelToPdfTool /> : null}
       {tool.slug === "days-between-dates" ? <DaysBetweenDatesTool /> : null}
+      {tool.slug === "days-from-today" ? <DaysFromTodayTool /> : null}
       {tool.slug === "markup-margin-calculator" ? <MarkupMarginCalculatorTool /> : null}
       {tool.slug === "time-zone-converter" ? <TimeZoneMeetingPlannerTool /> : null}
       {tool.slug === "id-list-formatter" ? <IdListFormatterTool /> : null}
@@ -406,6 +597,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "percentage-calculator" ? <PercentageCalculatorTool /> : null}
       {tool.slug === "tip-calculator" ? <TipCalculatorTool /> : null}
       {tool.slug === "loan-payment-calculator" ? <LoanPaymentCalculatorTool /> : null}
+      {tool.slug === "paycheck-calculator" ? <PaycheckCalculatorTool /> : null}
       {tool.slug === "sales-tax-calculator" ? <SalesTaxCalculatorTool /> : null}
       {tool.slug === "discount-tax-calculator" ? <DiscountTaxCalculatorTool /> : null}
       {tool.slug === "apr-calculator" ? <AprCalculatorTool /> : null}
@@ -441,6 +633,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "pdf-summarizer" &&
       tool.slug !== "excel-to-pdf" &&
       tool.slug !== "days-between-dates" &&
+      tool.slug !== "days-from-today" &&
       tool.slug !== "markup-margin-calculator" &&
       tool.slug !== "time-zone-converter" &&
       tool.slug !== "id-list-formatter" &&
@@ -452,6 +645,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "percentage-calculator" &&
       tool.slug !== "tip-calculator" &&
       tool.slug !== "loan-payment-calculator" &&
+      tool.slug !== "paycheck-calculator" &&
       tool.slug !== "sales-tax-calculator" &&
       tool.slug !== "discount-tax-calculator" &&
       tool.slug !== "apr-calculator" &&
@@ -486,6 +680,27 @@ export default async function ToolPage({ params }: ToolPageProps) {
             <li key={item}>{item}</li>
           ))}
         </ol>
+      </section>
+
+      <section className="mt-8 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+        <h2 className="text-2xl font-semibold">Detailed Guide</h2>
+        <div className="mt-3 space-y-3 text-sm leading-7 text-muted sm:text-base">
+          {usageGuide.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+        <h2 className="text-2xl font-semibold">FAQ</h2>
+        <div className="mt-4 space-y-3">
+          {faqItems.map((item) => (
+            <article key={item.question} className="rounded-2xl border border-line bg-white p-4">
+              <h3 className="text-sm font-semibold text-foreground sm:text-base">{item.question}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted">{item.answer}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       {relatedTools.length > 0 ? (

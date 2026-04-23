@@ -1,12 +1,13 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
+const isVercel = process.env.VERCEL === "1";
 const scriptSrc = isDev
   ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com;"
   : "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com;";
 
 const nextConfig: NextConfig = {
-  distDir: ".next-app",
+  distDir: isVercel ? ".next" : ".next-app",
   devIndicators: false,
   async headers() {
     return [

@@ -34,6 +34,7 @@ import { SalesTaxCalculatorTool } from "@/components/sales-tax-calculator-tool";
 import { SubscriptionDowngradeOptimizerTool } from "@/components/subscription-downgrade-optimizer-tool";
 import { SubscriptionWasteFinderTool } from "@/components/subscription-waste-finder-tool";
 import { TdeeCalculatorTool } from "@/components/tdee-calculator-tool";
+import { TimeCardCalculatorTool } from "@/components/time-card-calculator-tool";
 import { TimeZoneMeetingPlannerTool } from "@/components/time-zone-meeting-planner-tool";
 import { TipCalculatorTool } from "@/components/tip-calculator-tool";
 import { UnitConverterTool } from "@/components/unit-converter-tool";
@@ -428,6 +429,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Enter pre-tax deduction and tax rate assumptions.",
               "Review estimated gross, tax breakdown, and take-home pay per paycheck.",
             ]
+        : tool.slug === "time-card-calculator"
+          ? [
+              "Enter clock-in and clock-out times for each workday.",
+              "Set break minutes, hourly rate, and overtime rules.",
+              "Get weekly total hours, overtime hours, and estimated gross pay.",
+            ]
         : tool.slug === "sales-tax-calculator"
           ? [
               "Choose whether you are adding tax or extracting tax from total.",
@@ -598,6 +605,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "tip-calculator" ? <TipCalculatorTool /> : null}
       {tool.slug === "loan-payment-calculator" ? <LoanPaymentCalculatorTool /> : null}
       {tool.slug === "paycheck-calculator" ? <PaycheckCalculatorTool /> : null}
+      {tool.slug === "time-card-calculator" ? <TimeCardCalculatorTool /> : null}
       {tool.slug === "sales-tax-calculator" ? <SalesTaxCalculatorTool /> : null}
       {tool.slug === "discount-tax-calculator" ? <DiscountTaxCalculatorTool /> : null}
       {tool.slug === "apr-calculator" ? <AprCalculatorTool /> : null}
@@ -646,6 +654,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "tip-calculator" &&
       tool.slug !== "loan-payment-calculator" &&
       tool.slug !== "paycheck-calculator" &&
+      tool.slug !== "time-card-calculator" &&
       tool.slug !== "sales-tax-calculator" &&
       tool.slug !== "discount-tax-calculator" &&
       tool.slug !== "apr-calculator" &&

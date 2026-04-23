@@ -191,6 +191,13 @@ export const tools: ToolItem[] = [
     keyword: "paycheck calculator",
   },
   {
+    slug: "time-card-calculator",
+    name: "Time Card Calculator",
+    summary: "Track weekly work hours, overtime, and gross pay from clock-in entries.",
+    category: "converters",
+    keyword: "time card calculator",
+  },
+  {
     slug: "sales-tax-calculator",
     name: "Sales Tax Calculator",
     summary: "Calculate tax amount, pre-tax price, and final total in seconds.",

@@ -49,6 +49,14 @@ export const metadata: Metadata = {
     images: ["/twitter-image"],
   },
   verification: googleSiteVerification ? { google: googleSiteVerification } : undefined,
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

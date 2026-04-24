@@ -2,37 +2,52 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { toolKeywordClusters, toolSeoDescriptionOverrides } from "@/lib/seo-keywords";
 import { AgeCalculatorTool } from "@/components/age-calculator-tool";
+import { AddWatermarkPdfTool } from "@/components/add-watermark-pdf-tool";
 import { AprCalculatorTool } from "@/components/apr-calculator-tool";
 import { BmiCalculatorTool } from "@/components/bmi-calculator-tool";
 import { CaseConverterTool } from "@/components/case-converter-tool";
 import { CharacterCounterTool } from "@/components/character-counter-tool";
+import { CompanyLookupNavigatorTool } from "@/components/company-lookup-navigator-tool";
 import { CurrencyConverterTool } from "@/components/currency-converter-tool";
 import { DaysFromTodayTool } from "@/components/days-from-today-tool";
 import { DaysBetweenDatesTool } from "@/components/days-between-dates-tool";
+import { DeletePdfPagesTool } from "@/components/delete-pdf-pages-tool";
 import { DiscountTaxCalculatorTool } from "@/components/discount-tax-calculator-tool";
+import { CompressPdfTool } from "@/components/compress-pdf-tool";
+import { EmojiCatalogTool } from "@/components/emoji-catalog-tool";
 import { ExcelToPdfTool } from "@/components/excel-to-pdf-tool";
 import { EvChargingCostCalculatorTool } from "@/components/ev-charging-cost-calculator-tool";
 import { EvTripChargingCostPlannerTool } from "@/components/ev-trip-charging-cost-planner-tool";
+import { HairstyleTryOnTool } from "@/components/hairstyle-try-on-tool";
 import { IdListFormatterTool } from "@/components/id-list-formatter-tool";
 import { ImageCompressorTool } from "@/components/image-compressor-tool";
 import { ImageConverterTool } from "@/components/image-converter-tool";
+import { ImageMosaicTool } from "@/components/image-mosaic-tool";
 import { ImageResizerTool } from "@/components/image-resizer-tool";
+import { JpgToPdfTool } from "@/components/jpg-to-pdf-tool";
 import { JpgToPngTool } from "@/components/jpg-to-png-tool";
 import { LoanPaymentCalculatorTool } from "@/components/loan-payment-calculator-tool";
 import { Md5Tool } from "@/components/md5-tool";
 import { MarkupMarginCalculatorTool } from "@/components/markup-margin-calculator-tool";
 import { MergePdfTool } from "@/components/merge-pdf-tool";
+import { OldPhotoRestorationTool } from "@/components/old-photo-restoration-tool";
 import { PercentageCalculatorTool } from "@/components/percentage-calculator-tool";
 import { PaycheckCalculatorTool } from "@/components/paycheck-calculator-tool";
+import { PeriodicTableTool } from "@/components/periodic-table-tool";
 import { PdfToJpgTool } from "@/components/pdf-to-jpg-tool";
 import { PdfSummarizerTool } from "@/components/pdf-summarizer-tool";
+import { PdfToTextTool } from "@/components/pdf-to-text-tool";
 import { PngToJpgTool } from "@/components/png-to-jpg-tool";
 import { QuarterlyTaxSafePayPlannerTool } from "@/components/quarterly-tax-safe-pay-planner-tool";
+import { QrCodeGeneratorTool } from "@/components/qr-code-generator-tool";
 import { RemoveLineBreaksTool } from "@/components/remove-line-breaks-tool";
+import { RotatePdfTool } from "@/components/rotate-pdf-tool";
 import { SalesTaxCalculatorTool } from "@/components/sales-tax-calculator-tool";
 import { SubscriptionDowngradeOptimizerTool } from "@/components/subscription-downgrade-optimizer-tool";
 import { SubscriptionWasteFinderTool } from "@/components/subscription-waste-finder-tool";
+import { SplitPdfTool } from "@/components/split-pdf-tool";
 import { TdeeCalculatorTool } from "@/components/tdee-calculator-tool";
 import { TimeCardCalculatorTool } from "@/components/time-card-calculator-tool";
 import { TimeZoneMeetingPlannerTool } from "@/components/time-zone-meeting-planner-tool";
@@ -58,7 +73,10 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
   }
 
   const categoryName = categoryLabels[tool.category];
-  const seoDescription = `${tool.summary} Free online ${tool.name.toLowerCase()} with instant results.`;
+  const keywordCluster = toolKeywordClusters[tool.slug] ?? [];
+  const seoDescription =
+    toolSeoDescriptionOverrides[tool.slug] ??
+    `${tool.summary} Free online ${tool.name.toLowerCase()} with instant results.`;
   const keywords = [
     tool.keyword,
     tool.name.toLowerCase(),
@@ -66,6 +84,7 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
     `free ${tool.keyword}`,
     `${categoryName.toLowerCase()} tool`,
     "usefulkit",
+    ...keywordCluster,
   ];
 
   return {
@@ -96,6 +115,11 @@ type FaqItem = {
   answer: string;
 };
 
+type GuideSection = {
+  title: string;
+  content: string;
+};
+
 const categoryTips: Record<ToolItem["category"], string> = {
   "file-tools":
     "For file tools, start with a small sample file first, confirm output quality, then process larger files. This helps avoid repeated work and makes your workflow more predictable.",
@@ -109,13 +133,89 @@ const categoryTips: Record<ToolItem["category"], string> = {
     "For health tools, use them as quick estimates and trend references. For medical decisions, always validate with professional guidance and your local standards.",
 };
 
-function buildUsageGuide(tool: ToolItem, categoryName: string): string[] {
+function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
+  const slugLogic: Partial<Record<ToolItem["slug"], string>> = {
+    "paycheck-calculator":
+      "The calculator derives paycheck gross income from salary/hourly mode and pay frequency, then applies pre-tax deductions and tax assumptions (federal/state/local/FICA) to estimate take-home pay.",
+    "time-card-calculator":
+      "Daily worked time is computed from clock-out minus clock-in minus break minutes, then aggregated weekly. Hours above your configured threshold are classified as overtime and priced with the overtime multiplier.",
+    "loan-payment-calculator":
+      "Monthly payment follows fixed-rate amortization assumptions. Total interest and repayment are derived from principal, periodic rate, and term length.",
+    "percentage-calculator":
+      "Outputs are deterministic percentage transformations: part-of-whole, rate derivation, and increase/decrease scenarios based on the selected mode.",
+    "days-from-today":
+      "Calendar mode applies direct day offsets; business mode advances by weekdays only. Boundary behavior changes when 'include start date' is enabled.",
+    "qr-code-generator":
+      "The QR matrix is encoded from your payload with selected error correction, quiet-zone margin, and render colors, then exported as PNG.",
+    "company-lookup-navigator":
+      "The tool normalizes your company query and prepares source-specific search URLs, so you can validate legal, commercial, and reputation signals in parallel.",
+    "compress-pdf":
+      "The tool rewrites PDF object streams with optimized save settings to reduce file size for uploads, sharing, and browser-based document workflows.",
+    "split-pdf":
+      "The tool reads your page ranges, copies only the selected PDF pages, and builds a new downloadable document in the browser.",
+    "rotate-pdf":
+      "The tool updates page rotation metadata for all pages or selected page ranges, then exports a corrected PDF directly in the browser.",
+    "delete-pdf-pages":
+      "The tool removes the selected pages from a PDF, keeps the remaining pages in order, and exports a cleaner document in the browser.",
+    "pdf-to-text":
+      "The tool reads text content from each PDF page, combines it into plain text output, and lets you copy or download the result in the browser.",
+    "add-watermark-pdf":
+      "The tool draws a configurable text watermark onto every PDF page, then exports the marked document directly in the browser.",
+    "jpg-to-pdf":
+      "The tool places uploaded images onto PDF pages, preserves the selected order, and exports a multi-page document directly in the browser.",
+    "emoji-catalog":
+      "The catalog groups emoji by family and applies deterministic keyword matching so users can quickly find and copy symbols for chats, posts, and documents.",
+    "excel-to-pdf":
+      "Workbook rows are parsed client-side, transformed into tabular layout, and rendered into paginated PDF output with sheet selection and size constraints.",
+    "hairstyle-try-on":
+      "The tool reads your portrait and applies either provider output or local visual masking to preview selected hairstyle shape and color before making a real haircut decision.",
+    "image-mosaic":
+      "The image is downscaled into a low-resolution grid and then scaled back up with smoothing disabled, producing block-based mosaic pixels across the full frame.",
+    "periodic-table":
+      "The tool maps elements by period and group, then supports fast lookup by name, symbol, and atomic number with family-level filtering.",
+    "old-photo-restoration":
+      "The restoration pipeline denoises grain, boosts contrast, corrects faded tones, and suppresses scratch-like outliers to produce a cleaner digital version of scanned old photos.",
+  };
+
+  const logicSentence =
+    slugLogic[tool.slug] ??
+    "The result is generated from the selected mode and entered values using deterministic rules, so identical inputs always produce identical outputs.";
+
+  const categoryUseCases: Record<ToolItem["category"], string> = {
+    "file-tools":
+      "Use this when you need fast document/image processing without opening desktop software, especially for repetitive operations and quick delivery workflows.",
+    "text-tools":
+      "Use this for cleaning, formatting, or transforming text before downstream tasks such as SQL, content publishing, customer communication, or automation scripts.",
+    "date-time":
+      "Use this for planning timelines, meeting windows, due dates, and date math where off-by-one and timezone mistakes are common.",
+    converters:
+      "Use this for finance, pricing, and unit conversions where decision speed matters but output consistency still needs to be auditable.",
+    health:
+      "Use this for quick wellness estimates and routine tracking, then validate with clinical or professional standards for medical-grade decisions.",
+  };
+
   return [
-    `${tool.name} is designed for fast, practical results when you need to complete a task without opening heavy software. Start by preparing clean input values and reviewing field labels before calculation or conversion. This reduces rework and gives you more reliable output on the first pass. If your workflow is repetitive, keep a standard input template so every run follows the same logic and quality checks.`,
-    `A good workflow is to run one quick trial first, validate the output visually, then process full data. For example, if you are working with business numbers, compare a known value to confirm assumptions before using final results. If you are working with files or text, review formatting and edge cases early. This staged approach is simple, but it prevents most mistakes that happen during rushed online tool usage.`,
-    `On mobile and desktop, this tool is optimized for speed and clarity. You can complete the flow in a few steps, then copy or download the result for your next task. If output does not look right, check input units, separators, and selected mode first. Most issues come from mismatched formats, not from the tool itself. Correcting those inputs usually fixes the result immediately.`,
-    `${categoryTips[tool.category]} In many teams, this saves time because people can align on one quick method instead of redoing the same work in multiple apps. It also improves consistency when several people handle similar tasks across marketing, operations, finance, or content workflows.`,
-    `UsefulKit keeps this ${categoryName.toLowerCase()} utility free and straightforward so you can focus on execution. For best results, treat this page as both a calculator and a checkpoint: enter data carefully, verify key outputs, and keep a record of important runs if the result affects decisions. This habit gives you speed today and better traceability later.`,
+    {
+      title: "1) Input Preparation",
+      content: `Start with clear, normalized inputs before you calculate. In ${tool.name}, verify units, date format, currency context, or payload format up front. One quick sample run prevents most downstream mistakes and reduces rework when you process real data.`,
+    },
+    {
+      title: "2) Calculation Logic",
+      content: logicSentence,
+    },
+    {
+      title: "3) Output Interpretation",
+      content:
+        "After generating results, validate one known reference case first. If numbers or output format look off, check mode selection, boundary options, and decimal/rounding assumptions before changing your source data.",
+    },
+    {
+      title: "4) Practical Use Cases",
+      content: `${categoryUseCases[tool.category]} ${categoryTips[tool.category]}`,
+    },
+    {
+      title: "5) Limits and Risk Control",
+      content: `UsefulKit keeps ${categoryName.toLowerCase()} workflows fast and transparent, but outputs should be reviewed before legal, financial, compliance, or medical decisions. Keep a short record of key runs (inputs + outputs) so your team can audit important outcomes later.`,
+    },
   ];
 }
 
@@ -196,6 +296,150 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Yes. After upload, you can select a worksheet and preview rows before generating the PDF.",
       },
     ],
+    "compress-pdf": [
+      {
+        question: "Will Compress PDF always make my file much smaller?",
+        answer:
+          "Not always. PDFs that are already optimized may only shrink a little, while larger or inefficiently saved files usually improve more.",
+      },
+      {
+        question: "Is PDF compression done in the browser?",
+        answer:
+          "Yes. This version runs locally in your browser, which keeps the workflow fast and privacy-friendly for common office documents.",
+      },
+    ],
+    "split-pdf": [
+      {
+        question: "How do I enter pages in Split PDF?",
+        answer:
+          "Use commas and ranges such as 1-3, 5, 8-10. The tool extracts only the valid pages you enter and keeps them in order.",
+      },
+      {
+        question: "Does Split PDF upload my file to a server?",
+        answer:
+          "No. This MVP runs in your browser and creates the new PDF locally before download.",
+      },
+    ],
+    "rotate-pdf": [
+      {
+        question: "Can I rotate just one page or a few pages?",
+        answer:
+          "Yes. Enter a page range such as 2, 4-6 to rotate only those pages, or leave the field blank to rotate the full document.",
+      },
+      {
+        question: "Will Rotate PDF re-upload my file?",
+        answer:
+          "No. This tool processes the PDF in your browser and downloads the corrected file locally.",
+      },
+    ],
+    "delete-pdf-pages": [
+      {
+        question: "Can I remove several PDF pages at once?",
+        answer:
+          "Yes. Use commas and ranges such as 1, 3-4, 8-10 to remove multiple pages in one step.",
+      },
+      {
+        question: "Can I delete every page in the PDF?",
+        answer:
+          "No. At least one page must remain, so the tool blocks full-document deletion by design.",
+      },
+    ],
+    "pdf-to-text": [
+      {
+        question: "Does PDF to Text work on scanned PDFs?",
+        answer:
+          "Usually not well. This tool is best for text-based PDFs. Scanned image PDFs usually need OCR before text extraction works properly.",
+      },
+      {
+        question: "Can I edit the extracted text before copying it?",
+        answer:
+          "Yes. After extraction, the text appears in an editable box so you can clean it up before copying or downloading.",
+      },
+    ],
+    "add-watermark-pdf": [
+      {
+        question: "Can I add a watermark to every page in the PDF?",
+        answer:
+          "Yes. This tool applies the same text watermark to every page in the exported PDF.",
+      },
+      {
+        question: "Can I change watermark size, color, and opacity?",
+        answer:
+          "Yes. You can adjust watermark text, font size, color, opacity, and placement before exporting the new file.",
+      },
+    ],
+    "jpg-to-pdf": [
+      {
+        question: "Can I combine multiple images into one PDF?",
+        answer:
+          "Yes. Upload multiple images, reorder them with the Up and Down buttons, and the final PDF will follow that page order.",
+      },
+      {
+        question: "Does JPG to PDF only support JPG files?",
+        answer:
+          "No. This version accepts JPG, PNG, and WebP images, then exports them together as one PDF document.",
+      },
+    ],
+    "hairstyle-try-on": [
+      {
+        question: "Is Hairstyle Try-On using a real AI model now?",
+        answer:
+          "This MVP supports two modes: provider mode (when API is configured) and local demo mode for instant preview.",
+      },
+      {
+        question: "Will my uploaded portrait be permanently stored?",
+        answer:
+          "By default this version is preview-oriented and does not require account storage. If storage behavior changes later, it should be documented clearly on the page.",
+      },
+    ],
+    "emoji-catalog": [
+      {
+        question: "Can I search emoji by keyword or name?",
+        answer:
+          "Yes. You can search using words like heart, smile, flag, or a specific emoji name to narrow results quickly.",
+      },
+      {
+        question: "How do I copy an emoji from this page?",
+        answer:
+          "Click any emoji tile and it will copy to clipboard instantly so you can paste it in messages, captions, or documents.",
+      },
+    ],
+    "image-mosaic": [
+      {
+        question: "How do I make the mosaic effect stronger?",
+        answer:
+          "Increase block size. Larger blocks produce more visible pixelation and stronger privacy masking.",
+      },
+      {
+        question: "Does this tool only mosaic part of the image?",
+        answer:
+          "This version applies mosaic to the full image frame. Region-based mosaic can be added in a later version.",
+      },
+    ],
+    "periodic-table": [
+      {
+        question: "Can I search periodic table elements by symbol or number?",
+        answer:
+          "Yes. You can search by element name, symbol (such as Fe), or atomic number (such as 26).",
+      },
+      {
+        question: "Does this include lanthanides and actinides?",
+        answer:
+          "Yes. Both series are displayed in dedicated rows and can be filtered like other element families.",
+      },
+    ],
+    "old-photo-restoration": [
+      {
+        question: "Can this restore very damaged photos perfectly?",
+        answer:
+          "It significantly improves many faded or lightly scratched photos, but severe tears or missing regions may still require manual retouching.",
+      },
+      {
+        question: "Does restoration happen locally in browser?",
+        answer:
+          "Yes. This MVP processes images client-side in your browser for fast preview and download.",
+      },
+    ],
     "pdf-summarizer": [
       {
         question: "How many pages can PDF Summarizer analyze?",
@@ -229,6 +473,30 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
         question: "Can this MD5 tool decrypt hashes?",
         answer:
           "No. MD5 is a one-way hash function. This page supports hash generation and input verification only.",
+      },
+    ],
+    "qr-code-generator": [
+      {
+        question: "What content can I encode in a QR code?",
+        answer:
+          "You can encode URLs, plain text, phone numbers, email addresses, and other text payloads that QR readers support.",
+      },
+      {
+        question: "How can I improve QR scan success?",
+        answer:
+          "Use shorter content, sufficient contrast, and a moderate error-correction level, then test with multiple phone cameras before publishing.",
+      },
+    ],
+    "company-lookup-navigator": [
+      {
+        question: "Is this a company database or a search navigator?",
+        answer:
+          "This tool is a navigator. It prepares direct links to trusted external sources where you can validate official and commercial company details.",
+      },
+      {
+        question: "Which sources are best for legal verification?",
+        answer:
+          "Start with official registries and filing systems such as SEC EDGAR, Companies House, and jurisdiction registries, then use commercial databases for additional context.",
       },
     ],
     "ev-charging-cost-calculator": [
@@ -283,6 +551,212 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
   return merged.slice(0, 6);
 }
 
+function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
+  const slugSpecific: Partial<Record<ToolItem["slug"], string[]>> = {
+    "paycheck-calculator": [
+      "Estimate per-paycheck take-home pay from salary or hourly input and pay frequency.",
+      "Inputs: gross income, pay schedule, pre-tax deductions, and tax-rate assumptions.",
+      "Outputs: gross pay, tax breakdown, and net pay per paycheck plus annual estimates.",
+    ],
+    "time-card-calculator": [
+      "Calculate weekly worked hours from daily clock-in and clock-out entries.",
+      "Inputs: each day in/out time, break minutes, hourly rate, overtime threshold.",
+      "Outputs: total hours, overtime hours, and estimated gross weekly pay.",
+    ],
+    "days-from-today": [
+      "Find an exact date by adding or subtracting days from a base date.",
+      "Inputs: base date, offset days, calendar or business-day mode.",
+      "Outputs: target date in ISO and human-readable format.",
+    ],
+    "qr-code-generator": [
+      "Generate a downloadable QR code from URL or text content.",
+      "Inputs: content, size, colors, margin, and error-correction level.",
+      "Outputs: scan-ready QR preview and PNG download.",
+    ],
+    "company-lookup-navigator": [
+      "Generate one-click lookup links across official and commercial company sources.",
+      "Inputs: company name and optional domain.",
+      "Outputs: direct query links for filings, registry checks, and reputation checks.",
+    ],
+    "compress-pdf": [
+      "Reduce PDF file size before sending, uploading, or archiving documents.",
+      "Inputs: a PDF file and selected compression level.",
+      "Outputs: smaller downloadable PDF plus size savings summary.",
+    ],
+    "split-pdf": [
+      "Extract only the pages you need from a larger PDF without opening desktop software.",
+      "Inputs: one PDF file and a page range such as 1-3, 5, 8-10.",
+      "Outputs: a new downloadable PDF containing only the selected pages.",
+    ],
+    "rotate-pdf": [
+      "Fix sideways or upside-down PDFs without reopening the source file in desktop software.",
+      "Inputs: one PDF file, a rotation angle, and optional page ranges.",
+      "Outputs: a corrected downloadable PDF with updated page orientation.",
+    ],
+    "delete-pdf-pages": [
+      "Remove unwanted cover sheets, blank pages, or appendix pages from a PDF in one browser-based step.",
+      "Inputs: one PDF file and the pages or ranges you want to delete.",
+      "Outputs: a cleaned downloadable PDF with only the remaining pages.",
+    ],
+    "pdf-to-text": [
+      "Extract plain text from contracts, reports, and exported PDFs without opening desktop software.",
+      "Inputs: one text-based PDF file.",
+      "Outputs: editable plain text that you can copy or download as a TXT file.",
+    ],
+    "add-watermark-pdf": [
+      "Mark review copies, internal drafts, and client-delivery documents with a clear PDF watermark.",
+      "Inputs: one PDF file plus watermark text, color, opacity, size, and placement settings.",
+      "Outputs: a downloadable watermarked PDF with the same text stamped on every page.",
+    ],
+    "jpg-to-pdf": [
+      "Turn one or more images into a printable, shareable PDF without installing desktop software.",
+      "Inputs: JPG, PNG, or WebP images plus your preferred page order.",
+      "Outputs: a downloadable PDF document with one image per page.",
+    ],
+    "emoji-catalog": [
+      "Find and copy emoji quickly for social posts, comments, chats, and product descriptions.",
+      "Inputs: search keyword and optional emoji category filter.",
+      "Outputs: filtered emoji grid with one-click copy interaction.",
+    ],
+    "hairstyle-try-on": [
+      "Preview hairstyle and hair color combinations before visiting a salon.",
+      "Inputs: portrait photo, selected hairstyle preset, and target hair color.",
+      "Outputs: side-by-side original image and hairstyle preview image.",
+    ],
+    "image-mosaic": [
+      "Apply censorship-style pixelation for privacy and content masking workflows.",
+      "Inputs: source image, block size, and output format.",
+      "Outputs: full-frame mosaic image with before/after preview and downloadable file.",
+    ],
+    "periodic-table": [
+      "Explore chemical elements quickly for study, classroom, and lab reference workflows.",
+      "Inputs: search query and optional family filter.",
+      "Outputs: interactive table highlighting matched elements with quick detail panel.",
+    ],
+    "old-photo-restoration": [
+      "Repair scanned or photographed vintage images for clearer sharing and archiving.",
+      "Inputs: old photo upload and restoration sliders for denoise, fade fix, scratch fix, and sharpness.",
+      "Outputs: before/after preview and downloadable restored JPG.",
+    ],
+  };
+
+  if (slugSpecific[tool.slug]) return slugSpecific[tool.slug]!;
+
+  return [
+    `${tool.name} is a free online ${categoryName.toLowerCase()} utility for fast task completion.`,
+    "Enter your required values, select the appropriate mode, and review instant output.",
+    "Use the result for quick workflow support, then validate for high-stakes decisions.",
+  ];
+}
+
+function buildMethodology(tool: ToolItem): string[] {
+  const methods: Partial<Record<ToolItem["slug"], string[]>> = {
+    "percentage-calculator": [
+      "Core formulas include: part = base * rate, and rate = part / base.",
+      "Increase/decrease modes apply multiplicative change to the original base value.",
+      "All outputs are deterministic from provided numeric inputs.",
+    ],
+    "loan-payment-calculator": [
+      "Monthly payment uses standard amortization with fixed rate and fixed term assumptions.",
+      "Interest is derived from periodic rate and remaining principal over each payment cycle.",
+      "Displayed totals are estimates and may differ from lender-specific fee structures.",
+    ],
+    "paycheck-calculator": [
+      "Gross pay is derived from salary/hourly inputs and selected pay frequency.",
+      "Tax amounts are estimated from user-entered federal, state, local, and FICA assumptions.",
+      "Net pay = gross pay - pre-tax deductions - estimated taxes.",
+    ],
+    "time-card-calculator": [
+      "Daily worked minutes = (clock out - clock in) - break minutes, with overnight support.",
+      "Weekly total is summed across days, then split into regular and overtime buckets.",
+      "Gross pay = regular hours * rate + overtime hours * rate * overtime multiplier.",
+    ],
+    "days-between-dates": [
+      "Date difference is computed from normalized calendar-day boundaries.",
+      "Optional inclusive mode adjusts boundary-day counting behavior.",
+      "Output includes absolute day count and derived week/day breakdown.",
+    ],
+    "days-from-today": [
+      "Calendar mode applies direct day offsets from local midnight boundary.",
+      "Business mode advances or rewinds by weekdays only (Mon-Fri).",
+      "Include-start option adjusts offset interpretation for boundary counting.",
+    ],
+    "qr-code-generator": [
+      "QR matrix is generated from input payload with selected error-correction level (L/M/Q/H).",
+      "Rendering parameters include pixel width, quiet-zone margin, and foreground/background colors.",
+      "Output is encoded as PNG data URL for direct download.",
+    ],
+    "compress-pdf": [
+      "The PDF is loaded client-side and re-saved with optimized object stream settings to reduce overhead.",
+      "Compression strength determines how aggressively the browser-side save step optimizes the document structure.",
+      "The output file is generated locally and downloaded directly without server-side storage.",
+    ],
+    "split-pdf": [
+      "The original PDF is parsed client-side and total page count is read before extraction begins.",
+      "Page range text is normalized into zero-based page indexes, with invalid or out-of-range values ignored safely.",
+      "Only the selected pages are copied into a new PDF file, which is then generated locally for download.",
+    ],
+    "rotate-pdf": [
+      "The PDF is loaded client-side and existing page rotation metadata is read before applying changes.",
+      "Page ranges are converted into valid zero-based page indexes so only the intended pages are updated.",
+      "Each selected page receives the chosen additional rotation, then the corrected PDF is generated locally for download.",
+    ],
+    "delete-pdf-pages": [
+      "The PDF is loaded client-side and page count is read before any deletion runs.",
+      "Page range text is converted into a validated list of target pages, while out-of-range values are ignored safely.",
+      "Selected pages are removed from the end toward the beginning so page indexes remain stable during deletion.",
+    ],
+    "pdf-to-text": [
+      "The PDF is parsed in the browser and text items are collected page by page.",
+      "Extracted text fragments are merged into readable plain text output, with page breaks preserved as spacing.",
+      "This workflow is strongest on text-based PDFs; scanned image PDFs usually require OCR that is not part of this tool.",
+    ],
+    "add-watermark-pdf": [
+      "The PDF is loaded client-side and each page is processed in sequence before export.",
+      "Watermark text is drawn directly onto every page using browser-side PDF rendering primitives with your selected styling.",
+      "The final watermarked PDF is generated locally, which keeps the workflow fast and avoids server-side storage.",
+    ],
+    "jpg-to-pdf": [
+      "Each uploaded image is read locally in the browser and measured before export.",
+      "The export keeps your chosen image order and creates one PDF page per image.",
+      "Images are scaled to fit the page area with margins while preserving aspect ratio for cleaner print and upload workflows.",
+    ],
+    "emoji-catalog": [
+      "Emoji entries are organized by predefined categories and indexed with keyword metadata.",
+      "Search runs deterministic string matching against emoji names and keyword tags.",
+      "Copy action writes the selected emoji symbol directly to clipboard for immediate reuse.",
+    ],
+    "hairstyle-try-on": [
+      "The tool accepts an uploaded image as input and applies selected style and color parameters.",
+      "When provider integration is configured, preview output can come from external AI inference.",
+      "If no provider is configured, local canvas rendering generates a quick visual mock for decision support.",
+    ],
+    "image-mosaic": [
+      "The source image is rendered to canvas, reduced to a coarse grid, then scaled back to original size.",
+      "Image smoothing is disabled during upscaling to preserve hard pixel blocks.",
+      "Output is exported to selected format (JPG/PNG/WebP) for direct download.",
+    ],
+    "periodic-table": [
+      "Element records are organized by atomic number, period, and group in a structured dataset.",
+      "Search and filter are deterministic string and category matches against that dataset.",
+      "Selected-element panel reads directly from the same indexed element source for consistency.",
+    ],
+    "old-photo-restoration": [
+      "The image is normalized to a safe working size, then passed through denoise and tonal enhancement stages.",
+      "Pixel-level adjustments rebalance contrast, saturation, and color fade to recover visual clarity.",
+      "Scratch reduction identifies abrupt outlier pixels and blends them with neighboring context to reduce visible defects.",
+    ],
+  };
+
+  return (
+    methods[tool.slug] ?? [
+      "Outputs are generated from transparent, deterministic processing based on user input.",
+      "No hidden weighting or opaque scoring is applied to the visible result.",
+      "For compliance-sensitive usage, validate results with your official calculation workflow.",
+    ]
+  );
+}
+
 export default async function ToolPage({ params }: ToolPageProps) {
   const { slug } = await params;
   const tool = getToolBySlug(slug);
@@ -293,6 +767,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
   const relatedTools = getToolsByCategory(tool.category).filter((item) => item.slug !== tool.slug);
   const usageGuide = buildUsageGuide(tool, categoryLabels[tool.category]);
   const faqItems = buildFaqItems(tool);
+  const quickAnswer = buildQuickAnswer(tool, categoryLabels[tool.category]);
+  const methodology = buildMethodology(tool);
+  const popularSearches = toolKeywordClusters[tool.slug] ?? [];
   const faqData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -310,7 +787,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: tool.name,
-    applicationCategory: "UtilitiesApplication",
+    applicationCategory: `${categoryLabels[tool.category]}Application`,
     operatingSystem: "Web",
     isAccessibleForFree: true,
     offers: {
@@ -319,6 +796,30 @@ export default async function ToolPage({ params }: ToolPageProps) {
       priceCurrency: "USD",
     },
     url: `https://usefulkit.io/tools/${tool.slug}`,
+  };
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://usefulkit.io",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: categoryLabels[tool.category],
+        item: `https://usefulkit.io/categories/${tool.category}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: tool.name,
+        item: `https://usefulkit.io/tools/${tool.slug}`,
+      },
+    ],
   };
   const howItWorks =
     tool.slug === "word-counter"
@@ -344,6 +845,66 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Paste text and choose a case style.",
               "Convert to upper, lower, title, or sentence case.",
               "Copy converted text instantly.",
+            ]
+        : tool.slug === "emoji-catalog"
+          ? [
+              "Choose a category or keep all categories enabled.",
+              "Search emoji by name or keyword.",
+              "Click any emoji tile to copy it instantly.",
+            ]
+        : tool.slug === "qr-code-generator"
+          ? [
+              "Enter a URL, text, or contact payload.",
+              "Adjust QR size, colors, margin, and error correction.",
+              "Download PNG and test scan before publishing.",
+            ]
+        : tool.slug === "company-lookup-navigator"
+          ? [
+              "Enter company name and optional domain once.",
+              "Generate one-click links to official and commercial lookup sites.",
+              "Open each source to verify filings, profile, and reputation signals.",
+            ]
+        : tool.slug === "compress-pdf"
+          ? [
+              "Upload the PDF you want to reduce in size.",
+              "Choose a balanced or strong compression mode.",
+              "Download the optimized PDF and review the saved space.",
+            ]
+        : tool.slug === "split-pdf"
+          ? [
+              "Upload the PDF document you want to split.",
+              "Enter the pages or page ranges you want to extract.",
+              "Download the new PDF containing only the selected pages.",
+            ]
+        : tool.slug === "rotate-pdf"
+          ? [
+              "Upload the PDF document that has sideways or upside-down pages.",
+              "Choose a rotation angle and optionally specify which pages to rotate.",
+              "Download the corrected PDF with updated page orientation.",
+            ]
+        : tool.slug === "delete-pdf-pages"
+          ? [
+              "Upload the PDF document you want to clean up.",
+              "Enter the pages or ranges you want to remove from the file.",
+              "Download the new PDF that keeps only the remaining pages.",
+            ]
+        : tool.slug === "pdf-to-text"
+          ? [
+              "Upload a text-based PDF document from your device.",
+              "UsefulKit extracts readable text from each page in your browser.",
+              "Copy the result or download it as a plain TXT file.",
+            ]
+        : tool.slug === "add-watermark-pdf"
+          ? [
+              "Upload the PDF document you want to mark.",
+              "Set watermark text, style, opacity, and placement.",
+              "Download the new PDF with your watermark applied to every page.",
+            ]
+        : tool.slug === "jpg-to-pdf"
+          ? [
+              "Upload one or more JPG, PNG, or WebP images.",
+              "Reorder them so the page sequence matches your final document.",
+              "Create and download one PDF with each image placed on its own page.",
             ]
         : tool.slug === "days-between-dates"
           ? [
@@ -393,18 +954,36 @@ export default async function ToolPage({ params }: ToolPageProps) {
                       "Convert to PNG with a single click.",
                       "Download PNG output and compare file size.",
                     ]
-                  : tool.slug === "image-converter"
-                    ? [
-                        "Upload one image file.",
-                        "Select target format: JPG, PNG, or WebP.",
-                        "Convert and download in one flow.",
-                      ]
-                    : tool.slug === "image-resizer"
+                    : tool.slug === "image-converter"
+                      ? [
+                          "Upload one image file.",
+                          "Select target format: JPG, PNG, or WebP.",
+                          "Convert and download in one flow.",
+                        ]
+                    : tool.slug === "image-mosaic"
+                      ? [
+                          "Upload a source image file.",
+                          "Set block size and output format.",
+                          "Generate and download full-image mosaic output.",
+                        ]
+                    : tool.slug === "periodic-table"
+                      ? [
+                          "Search by element name, symbol, or atomic number.",
+                          "Use family filters to narrow to element groups.",
+                          "Click any element tile to inspect key details instantly.",
+                        ]
+        : tool.slug === "image-resizer"
                       ? [
                           "Upload an image and set width and height.",
                           "Use custom size or quick social presets.",
                           "Resize and download instantly.",
                         ]
+        : tool.slug === "old-photo-restoration"
+          ? [
+              "Upload an old or faded photo from your device.",
+              "Tune restoration sliders such as denoise, fade correction, and scratch reduction.",
+              "Generate restored output, compare before/after, and download the result.",
+            ]
                       : tool.slug === "percentage-calculator"
                         ? [
                             "Pick a percentage calculation mode.",
@@ -513,6 +1092,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Choose the worksheet you want to export and preview rows.",
               "Export a paginated PDF file directly in your browser.",
             ]
+        : tool.slug === "hairstyle-try-on"
+          ? [
+              "Upload a clear portrait photo.",
+              "Pick a hairstyle preset and hair color.",
+              "Generate side-by-side preview before and after style simulation.",
+            ]
         : tool.slug === "currency-converter"
           ? [
               "Select source and target currencies.",
@@ -554,6 +1139,18 @@ export default async function ToolPage({ params }: ToolPageProps) {
             "UsefulKit calculates output in real time.",
             "Copy or export the result for your workflow.",
           ];
+  const howToData = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `How to use ${tool.name}`,
+    description: `Step-by-step usage guide for ${tool.name}.`,
+    step: howItWorks.map((item, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: item,
+      text: item,
+    })),
+  };
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -583,14 +1180,34 @@ export default async function ToolPage({ params }: ToolPageProps) {
         <p className="mt-3 max-w-2xl text-base text-muted sm:text-lg">{tool.summary}</p>
       </header>
 
+      <section className="mt-8 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+        <h2 className="text-2xl font-semibold">Quick Answer</h2>
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-muted sm:text-base">
+          {quickAnswer.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </section>
+
       {tool.slug === "word-counter" ? <WordCounterTool /> : null}
       {tool.slug === "character-counter" ? <CharacterCounterTool /> : null}
       {tool.slug === "case-converter" ? <CaseConverterTool /> : null}
+      {tool.slug === "compress-pdf" ? <CompressPdfTool /> : null}
+      {tool.slug === "split-pdf" ? <SplitPdfTool /> : null}
+      {tool.slug === "rotate-pdf" ? <RotatePdfTool /> : null}
+      {tool.slug === "delete-pdf-pages" ? <DeletePdfPagesTool /> : null}
+      {tool.slug === "pdf-to-text" ? <PdfToTextTool /> : null}
+      {tool.slug === "add-watermark-pdf" ? <AddWatermarkPdfTool /> : null}
+      {tool.slug === "emoji-catalog" ? <EmojiCatalogTool /> : null}
+      {tool.slug === "qr-code-generator" ? <QrCodeGeneratorTool /> : null}
+      {tool.slug === "company-lookup-navigator" ? <CompanyLookupNavigatorTool /> : null}
       {tool.slug === "age-calculator" ? <AgeCalculatorTool /> : null}
       {tool.slug === "pdf-to-jpg" ? <PdfToJpgTool /> : null}
+      {tool.slug === "jpg-to-pdf" ? <JpgToPdfTool /> : null}
       {tool.slug === "merge-pdf" ? <MergePdfTool /> : null}
       {tool.slug === "pdf-summarizer" ? <PdfSummarizerTool /> : null}
       {tool.slug === "excel-to-pdf" ? <ExcelToPdfTool /> : null}
+      {tool.slug === "hairstyle-try-on" ? <HairstyleTryOnTool /> : null}
       {tool.slug === "days-between-dates" ? <DaysBetweenDatesTool /> : null}
       {tool.slug === "days-from-today" ? <DaysFromTodayTool /> : null}
       {tool.slug === "markup-margin-calculator" ? <MarkupMarginCalculatorTool /> : null}
@@ -600,7 +1217,10 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "png-to-jpg" ? <PngToJpgTool /> : null}
       {tool.slug === "jpg-to-png" ? <JpgToPngTool /> : null}
       {tool.slug === "image-converter" ? <ImageConverterTool /> : null}
+      {tool.slug === "image-mosaic" ? <ImageMosaicTool /> : null}
+      {tool.slug === "periodic-table" ? <PeriodicTableTool /> : null}
       {tool.slug === "image-resizer" ? <ImageResizerTool /> : null}
+      {tool.slug === "old-photo-restoration" ? <OldPhotoRestorationTool /> : null}
       {tool.slug === "percentage-calculator" ? <PercentageCalculatorTool /> : null}
       {tool.slug === "tip-calculator" ? <TipCalculatorTool /> : null}
       {tool.slug === "loan-payment-calculator" ? <LoanPaymentCalculatorTool /> : null}
@@ -635,11 +1255,22 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug !== "word-counter" &&
       tool.slug !== "character-counter" &&
       tool.slug !== "case-converter" &&
+      tool.slug !== "compress-pdf" &&
+      tool.slug !== "split-pdf" &&
+      tool.slug !== "rotate-pdf" &&
+      tool.slug !== "delete-pdf-pages" &&
+      tool.slug !== "pdf-to-text" &&
+      tool.slug !== "add-watermark-pdf" &&
+      tool.slug !== "emoji-catalog" &&
+      tool.slug !== "qr-code-generator" &&
+      tool.slug !== "company-lookup-navigator" &&
       tool.slug !== "age-calculator" &&
       tool.slug !== "pdf-to-jpg" &&
+      tool.slug !== "jpg-to-pdf" &&
       tool.slug !== "merge-pdf" &&
       tool.slug !== "pdf-summarizer" &&
       tool.slug !== "excel-to-pdf" &&
+      tool.slug !== "hairstyle-try-on" &&
       tool.slug !== "days-between-dates" &&
       tool.slug !== "days-from-today" &&
       tool.slug !== "markup-margin-calculator" &&
@@ -649,7 +1280,10 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "png-to-jpg" &&
       tool.slug !== "jpg-to-png" &&
       tool.slug !== "image-converter" &&
+      tool.slug !== "image-mosaic" &&
+      tool.slug !== "periodic-table" &&
       tool.slug !== "image-resizer" &&
+      tool.slug !== "old-photo-restoration" &&
       tool.slug !== "percentage-calculator" &&
       tool.slug !== "tip-calculator" &&
       tool.slug !== "loan-payment-calculator" &&
@@ -693,12 +1327,44 @@ export default async function ToolPage({ params }: ToolPageProps) {
 
       <section className="mt-8 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
         <h2 className="text-2xl font-semibold">Detailed Guide</h2>
-        <div className="mt-3 space-y-3 text-sm leading-7 text-muted sm:text-base">
-          {usageGuide.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
+        <div className="mt-4 grid gap-3">
+          {usageGuide.map((section) => (
+            <article key={section.title} className="rounded-2xl border border-line bg-white p-4">
+              <h3 className="text-sm font-semibold text-foreground sm:text-base">{section.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted">{section.content}</p>
+            </article>
           ))}
         </div>
       </section>
+
+      <section className="mt-8 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+        <h2 className="text-2xl font-semibold">Methodology</h2>
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-muted sm:text-base">
+          {methodology.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </section>
+
+      {popularSearches.length > 0 ? (
+        <section className="mt-8 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-semibold">Popular Searches</h2>
+          <p className="mt-3 text-sm leading-6 text-muted">
+            People often look for this tool using related search phrases. UsefulKit covers the same
+            workflow with a fast browser-based experience.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {popularSearches.map((keyword) => (
+              <span
+                key={keyword}
+                className="rounded-full border border-line bg-white px-3 py-1 text-xs font-semibold text-muted"
+              >
+                {keyword}
+              </span>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-8 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
         <h2 className="text-2xl font-semibold">FAQ</h2>
@@ -733,6 +1399,14 @@ export default async function ToolPage({ params }: ToolPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
     </main>
   );

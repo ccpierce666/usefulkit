@@ -32,6 +32,36 @@ export const metadata: Metadata = {
 };
 
 export default function ToolsPage() {
+  const itemListData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "UsefulKit All Tools",
+    itemListElement: tools.map((tool, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: tool.name,
+      url: `https://usefulkit.io/tools/${tool.slug}`,
+    })),
+  };
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://usefulkit.io",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "All Tools",
+        item: "https://usefulkit.io/tools",
+      },
+    ],
+  };
+
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <header className="rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
@@ -55,6 +85,14 @@ export default function ToolsPage() {
           </Link>
         ))}
       </section>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
     </main>
   );
 }

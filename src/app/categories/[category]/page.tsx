@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { categoryKeywordClusters } from "@/lib/seo-keywords";
 import { categoryLabels, categoryOrder, getToolsByCategory, type ToolCategory } from "@/lib/tools";
 
 type CategoryPageProps = {
@@ -22,7 +23,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 
   const name = categoryLabels[category];
-  const description = `Browse free ${name.toLowerCase()} from UsefulKit.`;
+  const toolCount = getToolsByCategory(category).length;
+  const description = `Browse ${toolCount} free ${name.toLowerCase()} from UsefulKit.`;
   return {
     title: `${name} Tools`,
     description,
@@ -31,6 +33,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       `${name.toLowerCase()} online`,
       `free ${name.toLowerCase()} tools`,
       "usefulkit",
+      ...categoryKeywordClusters[category],
     ],
     alternates: {
       canonical: `https://usefulkit.io/categories/${category}`,
@@ -58,6 +61,35 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   }
 
   const list = getToolsByCategory(category);
+  const itemListData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${categoryLabels[category]} Tools`,
+    itemListElement: list.map((tool, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: tool.name,
+      url: `https://usefulkit.io/tools/${tool.slug}`,
+    })),
+  };
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://usefulkit.io",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: categoryLabels[category],
+        item: `https://usefulkit.io/categories/${category}`,
+      },
+    ],
+  };
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -80,6 +112,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </Link>
         ))}
       </section>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
     </main>
   );
 }

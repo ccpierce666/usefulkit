@@ -1,10 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 
 type RenderedPage = {
   pageNumber: number;
   url: string;
+  width: number;
+  height: number;
 };
 
 export function PdfToJpgTool() {
@@ -56,7 +59,12 @@ export function PdfToJpgTool() {
         );
         if (!blob) continue;
         const url = URL.createObjectURL(blob);
-        nextPages.push({ pageNumber: i, url });
+        nextPages.push({
+          pageNumber: i,
+          url,
+          width: Math.round(viewport.width),
+          height: Math.round(viewport.height),
+        });
       }
 
       setPages(nextPages);
@@ -129,9 +137,12 @@ export function PdfToJpgTool() {
             {pages.map((item) => (
               <article key={item.pageNumber} className="rounded-2xl border border-line bg-white p-3">
                 <p className="text-sm font-semibold">Page {item.pageNumber}</p>
-                <img
+                <Image
                   src={item.url}
                   alt={`Converted page ${item.pageNumber}`}
+                  width={item.width}
+                  height={item.height}
+                  unoptimized
                   className="mt-2 h-48 w-full rounded-lg border border-line object-contain"
                 />
                 <a

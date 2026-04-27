@@ -180,6 +180,48 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "png image converter",
     "png to jpg online free",
   ],
+  "heic-to-jpg": [
+    "convert heic to jpg",
+    "heif to jpg",
+    "iphone photo to jpg",
+    "heic converter online",
+    "heic to jpeg free",
+  ],
+  "webp-to-jpg": [
+    "convert webp to jpg",
+    "webp to png",
+    "webp converter online",
+    "change webp to jpeg",
+    "webp image converter",
+  ],
+  "remove-background": [
+    "remove image background",
+    "background remover online",
+    "make image transparent",
+    "remove white background from image",
+    "free background remover",
+  ],
+  "gif-compressor": [
+    "compress gif",
+    "reduce gif size",
+    "gif optimizer",
+    "shrink gif file",
+    "gif compressor online",
+  ],
+  "gif-to-mp4": [
+    "convert gif to mp4",
+    "gif to video",
+    "gif to mp4 converter",
+    "turn gif into mp4",
+    "gif to mp4 online",
+  ],
+  "mp4-to-gif": [
+    "convert mp4 to gif",
+    "video to gif converter",
+    "make gif from mp4",
+    "mp4 gif maker",
+    "mp4 to gif online",
+  ],
   "jpg-to-png": [
     "convert jpg to png",
     "jpeg to png converter",
@@ -229,4 +271,16 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Reduce image size online with a fast JPG, PNG, and WebP image compressor built for browser workflows.",
   "image-resizer":
     "Resize images online for social media, websites, and documents with custom dimensions and quick presets.",
+  "heic-to-jpg":
+    "Convert HEIC to JPG online, turn iPhone HEIF photos into shareable JPEG files, and download instantly.",
+  "webp-to-jpg":
+    "Convert WebP to JPG online or export WebP to PNG for wider compatibility across apps and websites.",
+  "remove-background":
+    "Remove image background online and export transparent PNG or WebP files in a quick browser workflow.",
+  "gif-compressor":
+    "Compress GIF online by reducing frame rate, dimensions, and color count to shrink animated file size.",
+  "gif-to-mp4":
+    "Convert GIF to MP4 online for better website performance, smaller files, and smoother playback.",
+  "mp4-to-gif":
+    "Convert MP4 to GIF online with adjustable duration, frame rate, and output size for social sharing.",
 };

@@ -20,7 +20,10 @@ import { EmojiCatalogTool } from "@/components/emoji-catalog-tool";
 import { ExcelToPdfTool } from "@/components/excel-to-pdf-tool";
 import { EvChargingCostCalculatorTool } from "@/components/ev-charging-cost-calculator-tool";
 import { EvTripChargingCostPlannerTool } from "@/components/ev-trip-charging-cost-planner-tool";
+import { GifCompressorTool } from "@/components/gif-compressor-tool";
+import { GifToMp4Tool } from "@/components/gif-to-mp4-tool";
 import { HairstyleTryOnTool } from "@/components/hairstyle-try-on-tool";
+import { HeicToJpgTool } from "@/components/heic-to-jpg-tool";
 import { IdListFormatterTool } from "@/components/id-list-formatter-tool";
 import { ImageCompressorTool } from "@/components/image-compressor-tool";
 import { ImageConverterTool } from "@/components/image-converter-tool";
@@ -32,6 +35,7 @@ import { LoanPaymentCalculatorTool } from "@/components/loan-payment-calculator-
 import { Md5Tool } from "@/components/md5-tool";
 import { MarkupMarginCalculatorTool } from "@/components/markup-margin-calculator-tool";
 import { MergePdfTool } from "@/components/merge-pdf-tool";
+import { Mp4ToGifTool } from "@/components/mp4-to-gif-tool";
 import { OldPhotoRestorationTool } from "@/components/old-photo-restoration-tool";
 import { PercentageCalculatorTool } from "@/components/percentage-calculator-tool";
 import { PaycheckCalculatorTool } from "@/components/paycheck-calculator-tool";
@@ -42,6 +46,7 @@ import { PdfToTextTool } from "@/components/pdf-to-text-tool";
 import { PngToJpgTool } from "@/components/png-to-jpg-tool";
 import { QuarterlyTaxSafePayPlannerTool } from "@/components/quarterly-tax-safe-pay-planner-tool";
 import { QrCodeGeneratorTool } from "@/components/qr-code-generator-tool";
+import { RemoveBackgroundTool } from "@/components/remove-background-tool";
 import { RemoveLineBreaksTool } from "@/components/remove-line-breaks-tool";
 import { RotatePdfTool } from "@/components/rotate-pdf-tool";
 import { SalesTaxCalculatorTool } from "@/components/sales-tax-calculator-tool";
@@ -54,6 +59,7 @@ import { TimeZoneMeetingPlannerTool } from "@/components/time-zone-meeting-plann
 import { TipCalculatorTool } from "@/components/tip-calculator-tool";
 import { UnitConverterTool } from "@/components/unit-converter-tool";
 import { WaterIntakeCalculatorTool } from "@/components/water-intake-calculator-tool";
+import { WebpToJpgTool } from "@/components/webp-to-jpg-tool";
 import { WordCounterTool } from "@/components/word-counter-tool";
 import { categoryLabels, getToolBySlug, getToolsByCategory, tools, type ToolItem } from "@/lib/tools";
 
@@ -171,6 +177,18 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The tool reads your portrait and applies either provider output or local visual masking to preview selected hairstyle shape and color before making a real haircut decision.",
     "image-mosaic":
       "The image is downscaled into a low-resolution grid and then scaled back up with smoothing disabled, producing block-based mosaic pixels across the full frame.",
+    "remove-background":
+      "The tool estimates background color from edge regions, computes per-pixel color distance, and applies alpha masking with soft transitions for a transparent output.",
+    "webp-to-jpg":
+      "The tool decodes WebP in-browser, flattens transparency when needed, then exports JPG or PNG based on your selected compatibility target.",
+    "heic-to-jpg":
+      "The tool decodes HEIC/HEIF photos in-browser and re-encodes them as JPG so they can be uploaded to platforms that do not support HEIC.",
+    "gif-compressor":
+      "The tool re-encodes GIF frames with configurable frame rate, scale, and color palette limits to reduce final file size.",
+    "gif-to-mp4":
+      "The tool transcodes animated GIF into H.264 MP4 with browser-compatible pixel format and faststart flags for web delivery.",
+    "mp4-to-gif":
+      "The tool extracts a short MP4 segment, generates an optimized palette, and encodes it as a looping GIF.",
     "periodic-table":
       "The tool maps elements by period and group, then supports fast lookup by name, symbol, and atomic number with family-level filtering.",
     "old-photo-restoration":
@@ -416,6 +434,78 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "This version applies mosaic to the full image frame. Region-based mosaic can be added in a later version.",
       },
     ],
+    "remove-background": [
+      {
+        question: "Will this remove complex backgrounds perfectly?",
+        answer:
+          "This MVP works best on solid or near-solid backgrounds. Busy scenes and hair-detail edges may need manual touch-up in advanced editors.",
+      },
+      {
+        question: "Does transparent background export keep alpha?",
+        answer:
+          "Yes. Export as PNG (recommended) or WebP to keep transparency for product images, profile cutouts, and design workflows.",
+      },
+    ],
+    "webp-to-jpg": [
+      {
+        question: "Can this convert WebP to PNG too?",
+        answer:
+          "Yes. The tool page is optimized for WebP to JPG keyword intent, but you can choose PNG output when you need transparency.",
+      },
+      {
+        question: "Why does JPG output sometimes look different?",
+        answer:
+          "JPG is lossy and does not preserve transparency. The tool fills transparent areas with your chosen background color before export.",
+      },
+    ],
+    "heic-to-jpg": [
+      {
+        question: "Is this mainly for iPhone photos?",
+        answer:
+          "Yes. HEIC/HEIF files commonly come from iPhone cameras, and this tool converts them into universal JPG format for upload and sharing.",
+      },
+      {
+        question: "Will metadata be preserved after conversion?",
+        answer:
+          "This browser-side conversion focuses on image content compatibility. Detailed metadata preservation can vary by source file and browser.",
+      },
+    ],
+    "gif-compressor": [
+      {
+        question: "How do I make GIF files much smaller?",
+        answer:
+          "Lower FPS, reduce scale percent, and reduce max colors. Combining all three usually gives the largest size reduction.",
+      },
+      {
+        question: "Will quality drop after GIF compression?",
+        answer:
+          "Some quality loss is expected because compression reduces frames, dimensions, or palette depth. You can tune sliders to balance quality and size.",
+      },
+    ],
+    "gif-to-mp4": [
+      {
+        question: "Why convert GIF to MP4?",
+        answer:
+          "MP4 usually loads faster and is much smaller than GIF, which improves website performance and social sharing speed.",
+      },
+      {
+        question: "Will the animation loop in MP4?",
+        answer:
+          "The tool exports a standard MP4 video. Most players can loop playback if you enable loop in the player settings.",
+      },
+    ],
+    "mp4-to-gif": [
+      {
+        question: "How can I keep MP4 to GIF size manageable?",
+        answer:
+          "Use shorter duration, lower FPS, and narrower output width. These three controls have the biggest impact on GIF size.",
+      },
+      {
+        question: "Does this tool support long videos?",
+        answer:
+          "It is optimized for short clips. Long videos consume more memory in browser, so short highlights are recommended for stable conversion.",
+      },
+    ],
     "periodic-table": [
       {
         question: "Can I search periodic table elements by symbol or number?",
@@ -628,6 +718,36 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Inputs: source image, block size, and output format.",
       "Outputs: full-frame mosaic image with before/after preview and downloadable file.",
     ],
+    "remove-background": [
+      "Remove solid or near-solid image backgrounds for e-commerce, profile photos, and design assets.",
+      "Inputs: image upload, threshold, softness, and output format selection.",
+      "Outputs: transparent PNG/WebP file with side-by-side preview and download.",
+    ],
+    "webp-to-jpg": [
+      "Convert WebP images into JPG for broader compatibility or PNG when transparency is required.",
+      "Inputs: WebP file, output format, and optional JPG quality/background color.",
+      "Outputs: converted file with instant preview and downloadable result.",
+    ],
+    "heic-to-jpg": [
+      "Convert iPhone HEIC/HEIF images into standard JPG for web uploads and cross-platform sharing.",
+      "Inputs: HEIC or HEIF file and JPG quality setting.",
+      "Outputs: downloadable JPG file with output size preview.",
+    ],
+    "gif-compressor": [
+      "Reduce animated GIF file size for faster upload, email sharing, and web embedding.",
+      "Inputs: GIF upload plus FPS, scale, and max-color settings.",
+      "Outputs: compressed GIF with side-by-side preview and saved-size metrics.",
+    ],
+    "gif-to-mp4": [
+      "Convert GIF animations to MP4 for better playback compatibility and lower bandwidth usage.",
+      "Inputs: GIF upload plus target FPS and quality controls.",
+      "Outputs: downloadable MP4 file and before/after size comparison.",
+    ],
+    "mp4-to-gif": [
+      "Create shareable GIF loops from short MP4 clips for social media and support docs.",
+      "Inputs: MP4 upload plus target FPS, width, and clip duration.",
+      "Outputs: downloadable GIF with instant preview and size comparison.",
+    ],
     "periodic-table": [
       "Explore chemical elements quickly for study, classroom, and lab reference workflows.",
       "Inputs: search query and optional family filter.",
@@ -735,6 +855,36 @@ function buildMethodology(tool: ToolItem): string[] {
       "The source image is rendered to canvas, reduced to a coarse grid, then scaled back to original size.",
       "Image smoothing is disabled during upscaling to preserve hard pixel blocks.",
       "Output is exported to selected format (JPG/PNG/WebP) for direct download.",
+    ],
+    "remove-background": [
+      "Corner patches are sampled to estimate likely background color across image boundaries.",
+      "Per-pixel distance to sampled background colors is converted into alpha transparency using threshold and softness controls.",
+      "The output keeps transparent pixels in PNG/WebP format for direct download and reuse.",
+    ],
+    "webp-to-jpg": [
+      "WebP is decoded in browser canvas, then re-encoded to the selected output format.",
+      "For JPG output, transparent pixels are flattened against your chosen background color.",
+      "For PNG output, alpha transparency is preserved with lossless export behavior.",
+    ],
+    "heic-to-jpg": [
+      "Uploaded HEIC/HEIF image data is decoded client-side and re-encoded as JPEG.",
+      "Quality slider controls JPEG compression to balance file size and visual detail.",
+      "Output is generated in-browser for quick download without server-side file storage.",
+    ],
+    "gif-compressor": [
+      "The source GIF is decoded and re-encoded with a regenerated palette and adjusted frame pipeline.",
+      "Compression impact comes from three levers: frame rate, scale ratio, and max color count.",
+      "The result is exported as a looping GIF directly in the browser session.",
+    ],
+    "gif-to-mp4": [
+      "Animated GIF frames are transcoded to H.264 MP4 with yuv420p output for broad player compatibility.",
+      "Frame rate control reduces redundant animation frames while preserving motion readability.",
+      "Faststart MP4 metadata improves progressive playback on modern browsers and apps.",
+    ],
+    "mp4-to-gif": [
+      "The video input is trimmed to the selected duration before GIF encoding to control output size.",
+      "Palette generation and paletteuse stages improve color quality for animated GIF output.",
+      "Output width and FPS directly influence memory usage and final GIF size.",
     ],
     "periodic-table": [
       "Element records are organized by atomic number, period, and group in a structured dataset.",
@@ -930,61 +1080,97 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Set meeting date and duration.",
               "Get overlap slots shown in each participant's local time.",
             ]
-          : tool.slug === "id-list-formatter"
-            ? [
-                "Paste IDs with one ID per line.",
-                "Set a suffix symbol, such as a comma or semicolon.",
-                "Copy the formatted list for SQL, scripts, or batch operations.",
-              ]
-            : tool.slug === "image-compressor"
-              ? [
-                  "Upload a JPG, PNG, or WebP image.",
-                  "Tune quality and output format.",
-                  "Download compressed output with size savings.",
-                ]
-              : tool.slug === "png-to-jpg"
-                ? [
-                    "Upload a PNG image.",
-                    "Set JPG quality and transparent background color.",
-                    "Download JPG output and compare file size.",
-                  ]
-                : tool.slug === "jpg-to-png"
-                  ? [
-                      "Upload a JPG or JPEG image.",
-                      "Convert to PNG with a single click.",
-                      "Download PNG output and compare file size.",
-                    ]
-                    : tool.slug === "image-converter"
-                      ? [
-                          "Upload one image file.",
-                          "Select target format: JPG, PNG, or WebP.",
-                          "Convert and download in one flow.",
-                        ]
-                    : tool.slug === "image-mosaic"
-                      ? [
-                          "Upload a source image file.",
-                          "Set block size and output format.",
-                          "Generate and download full-image mosaic output.",
-                        ]
-                    : tool.slug === "periodic-table"
-                      ? [
-                          "Search by element name, symbol, or atomic number.",
-                          "Use family filters to narrow to element groups.",
-                          "Click any element tile to inspect key details instantly.",
-                        ]
+        : tool.slug === "id-list-formatter"
+          ? [
+              "Paste IDs with one ID per line.",
+              "Set a suffix symbol, such as a comma or semicolon.",
+              "Copy the formatted list for SQL, scripts, or batch operations.",
+            ]
+        : tool.slug === "image-compressor"
+          ? [
+              "Upload a JPG, PNG, or WebP image.",
+              "Tune quality and output format.",
+              "Download compressed output with size savings.",
+            ]
+        : tool.slug === "heic-to-jpg"
+          ? [
+              "Upload a HEIC or HEIF image from iPhone or other sources.",
+              "Set JPG quality based on your sharing or upload needs.",
+              "Convert and download a standard JPG file instantly.",
+            ]
+        : tool.slug === "gif-compressor"
+          ? [
+              "Upload your animated GIF file.",
+              "Tune FPS, scale, and color count for target size.",
+              "Compress and download the optimized GIF output.",
+            ]
+        : tool.slug === "gif-to-mp4"
+          ? [
+              "Upload a GIF animation file.",
+              "Adjust FPS and quality settings based on target size.",
+              "Convert and download MP4 for faster playback.",
+            ]
+        : tool.slug === "mp4-to-gif"
+          ? [
+              "Upload a short MP4 clip.",
+              "Set duration, width, and FPS for your target output.",
+              "Convert and download looping GIF output.",
+            ]
+        : tool.slug === "webp-to-jpg"
+          ? [
+              "Upload a WebP image file.",
+              "Choose JPG for compatibility or PNG for transparent output.",
+              "Convert and download your new file with preview.",
+            ]
+        : tool.slug === "remove-background"
+          ? [
+              "Upload a product photo or portrait with a mostly solid background.",
+              "Adjust threshold and edge softness for cleaner cutout edges.",
+              "Export transparent PNG/WebP and download instantly.",
+            ]
+        : tool.slug === "png-to-jpg"
+          ? [
+              "Upload a PNG image.",
+              "Set JPG quality and transparent background color.",
+              "Download JPG output and compare file size.",
+            ]
+        : tool.slug === "jpg-to-png"
+          ? [
+              "Upload a JPG or JPEG image.",
+              "Convert to PNG with a single click.",
+              "Download PNG output and compare file size.",
+            ]
+        : tool.slug === "image-converter"
+          ? [
+              "Upload one image file.",
+              "Select target format: JPG, PNG, or WebP.",
+              "Convert and download in one flow.",
+            ]
+        : tool.slug === "image-mosaic"
+          ? [
+              "Upload a source image file.",
+              "Set block size and output format.",
+              "Generate and download full-image mosaic output.",
+            ]
+        : tool.slug === "periodic-table"
+          ? [
+              "Search by element name, symbol, or atomic number.",
+              "Use family filters to narrow to element groups.",
+              "Click any element tile to inspect key details instantly.",
+            ]
         : tool.slug === "image-resizer"
-                      ? [
-                          "Upload an image and set width and height.",
-                          "Use custom size or quick social presets.",
-                          "Resize and download instantly.",
-                        ]
+          ? [
+              "Upload an image and set width and height.",
+              "Use custom size or quick social presets.",
+              "Resize and download instantly.",
+            ]
         : tool.slug === "old-photo-restoration"
           ? [
               "Upload an old or faded photo from your device.",
               "Tune restoration sliders such as denoise, fade correction, and scratch reduction.",
               "Generate restored output, compare before/after, and download the result.",
             ]
-                      : tool.slug === "percentage-calculator"
+        : tool.slug === "percentage-calculator"
                         ? [
                             "Pick a percentage calculation mode.",
                             "Enter values and get instant results.",
@@ -1214,6 +1400,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "time-zone-converter" ? <TimeZoneMeetingPlannerTool /> : null}
       {tool.slug === "id-list-formatter" ? <IdListFormatterTool /> : null}
       {tool.slug === "image-compressor" ? <ImageCompressorTool /> : null}
+      {tool.slug === "heic-to-jpg" ? <HeicToJpgTool /> : null}
+      {tool.slug === "gif-compressor" ? <GifCompressorTool /> : null}
+      {tool.slug === "gif-to-mp4" ? <GifToMp4Tool /> : null}
+      {tool.slug === "mp4-to-gif" ? <Mp4ToGifTool /> : null}
+      {tool.slug === "webp-to-jpg" ? <WebpToJpgTool /> : null}
+      {tool.slug === "remove-background" ? <RemoveBackgroundTool /> : null}
       {tool.slug === "png-to-jpg" ? <PngToJpgTool /> : null}
       {tool.slug === "jpg-to-png" ? <JpgToPngTool /> : null}
       {tool.slug === "image-converter" ? <ImageConverterTool /> : null}
@@ -1277,6 +1469,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "time-zone-converter" &&
       tool.slug !== "id-list-formatter" &&
       tool.slug !== "image-compressor" &&
+      tool.slug !== "heic-to-jpg" &&
+      tool.slug !== "gif-compressor" &&
+      tool.slug !== "gif-to-mp4" &&
+      tool.slug !== "mp4-to-gif" &&
+      tool.slug !== "webp-to-jpg" &&
+      tool.slug !== "remove-background" &&
       tool.slug !== "png-to-jpg" &&
       tool.slug !== "jpg-to-png" &&
       tool.slug !== "image-converter" &&

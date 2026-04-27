@@ -12,6 +12,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
+    "heic2any": "^0.0.4",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "next": "16.2.4",

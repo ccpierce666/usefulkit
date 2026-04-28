@@ -236,6 +236,13 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "find company information online",
     "business entity search links",
   ],
+  "roblox-player-lookup": [
+    "roblox player lookup",
+    "roblox user lookup",
+    "roblox username to id",
+    "roblox profile finder",
+    "roblox player search",
+  ],
 };
 
 export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
@@ -283,4 +290,6 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Convert GIF to MP4 online for better website performance, smaller files, and smoother playback.",
   "mp4-to-gif":
     "Convert MP4 to GIF online with adjustable duration, frame rate, and output size for social sharing.",
+  "roblox-player-lookup":
+    "Look up Roblox player profile data by username or user ID, including avatar, display name, and social counts.",
 };

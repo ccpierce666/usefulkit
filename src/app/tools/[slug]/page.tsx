@@ -46,6 +46,7 @@ import { PdfToTextTool } from "@/components/pdf-to-text-tool";
 import { PngToJpgTool } from "@/components/png-to-jpg-tool";
 import { QuarterlyTaxSafePayPlannerTool } from "@/components/quarterly-tax-safe-pay-planner-tool";
 import { QrCodeGeneratorTool } from "@/components/qr-code-generator-tool";
+import { RobloxPlayerLookupTool } from "@/components/roblox-player-lookup-tool";
 import { RemoveBackgroundTool } from "@/components/remove-background-tool";
 import { RemoveLineBreaksTool } from "@/components/remove-line-breaks-tool";
 import { RotatePdfTool } from "@/components/rotate-pdf-tool";
@@ -155,6 +156,8 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The QR matrix is encoded from your payload with selected error correction, quiet-zone margin, and render colors, then exported as PNG.",
     "company-lookup-navigator":
       "The tool normalizes your company query and prepares source-specific search URLs, so you can validate legal, commercial, and reputation signals in parallel.",
+    "roblox-player-lookup":
+      "The tool resolves Roblox username or user ID through public endpoints, then aggregates profile, avatar, and social count data into one view.",
     "compress-pdf":
       "The tool rewrites PDF object streams with optimized save settings to reduce file size for uploads, sharing, and browser-based document workflows.",
     "split-pdf":
@@ -589,6 +592,18 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Start with official registries and filing systems such as SEC EDGAR, Companies House, and jurisdiction registries, then use commercial databases for additional context.",
       },
     ],
+    "roblox-player-lookup": [
+      {
+        question: "Can I search by username and by user ID?",
+        answer:
+          "Yes. This tool supports both lookup modes. Username mode resolves the player ID first, then fetches the same public profile details.",
+      },
+      {
+        question: "What player data can this tool return?",
+        answer:
+          "It can return public profile fields such as display name, username, avatar, account creation date, and social counts when available from Roblox public endpoints.",
+      },
+    ],
     "ev-charging-cost-calculator": [
       {
         question: "Do state selections affect EV charging estimates?",
@@ -667,6 +682,11 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Generate one-click lookup links across official and commercial company sources.",
       "Inputs: company name and optional domain.",
       "Outputs: direct query links for filings, registry checks, and reputation checks.",
+    ],
+    "roblox-player-lookup": [
+      "Look up public Roblox player profile information from username or user ID.",
+      "Inputs: Roblox username or numeric user ID.",
+      "Outputs: avatar, display name, account creation date, and social counts.",
     ],
     "compress-pdf": [
       "Reduce PDF file size before sending, uploading, or archiving documents.",
@@ -1013,6 +1033,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Enter company name and optional domain once.",
               "Generate one-click links to official and commercial lookup sites.",
               "Open each source to verify filings, profile, and reputation signals.",
+            ]
+        : tool.slug === "roblox-player-lookup"
+          ? [
+              "Choose lookup mode: username or numeric user ID.",
+              "Submit your query and fetch public profile information from Roblox endpoints.",
+              "Review avatar, account details, and social counts in one panel.",
             ]
         : tool.slug === "compress-pdf"
           ? [
@@ -1387,6 +1413,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "emoji-catalog" ? <EmojiCatalogTool /> : null}
       {tool.slug === "qr-code-generator" ? <QrCodeGeneratorTool /> : null}
       {tool.slug === "company-lookup-navigator" ? <CompanyLookupNavigatorTool /> : null}
+      {tool.slug === "roblox-player-lookup" ? <RobloxPlayerLookupTool /> : null}
       {tool.slug === "age-calculator" ? <AgeCalculatorTool /> : null}
       {tool.slug === "pdf-to-jpg" ? <PdfToJpgTool /> : null}
       {tool.slug === "jpg-to-pdf" ? <JpgToPdfTool /> : null}
@@ -1456,6 +1483,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "emoji-catalog" &&
       tool.slug !== "qr-code-generator" &&
       tool.slug !== "company-lookup-navigator" &&
+      tool.slug !== "roblox-player-lookup" &&
       tool.slug !== "age-calculator" &&
       tool.slug !== "pdf-to-jpg" &&
       tool.slug !== "jpg-to-pdf" &&

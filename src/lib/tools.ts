@@ -261,6 +261,13 @@ export const tools: ToolItem[] = [
     keyword: "company lookup",
   },
   {
+    slug: "roblox-player-lookup",
+    name: "Roblox Player Lookup",
+    summary: "Find public Roblox player profile details by username or user ID.",
+    category: "text-tools",
+    keyword: "roblox player lookup",
+  },
+  {
     slug: "age-calculator",
     name: "Age Calculator",
     summary: "Calculate exact age from a date of birth.",

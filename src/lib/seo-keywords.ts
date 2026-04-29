@@ -250,6 +250,48 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "stock margin buying power simulator",
     "ib margin calculator",
   ],
+  "options-breakeven-pl-calculator": [
+    "options profit calculator",
+    "options breakeven calculator",
+    "call option profit calculator",
+    "put option profit calculator",
+    "option payoff calculator",
+  ],
+  "covered-call-return-calculator": [
+    "covered call calculator",
+    "covered call return calculator",
+    "covered call annualized return",
+    "covered call if called return",
+    "covered call breakeven calculator",
+  ],
+  "cash-secured-put-yield-calculator": [
+    "cash secured put calculator",
+    "cash secured put yield calculator",
+    "cash secured put annualized return",
+    "short put breakeven calculator",
+    "cash secured put assignment calculator",
+  ],
+  "ev-charge-time-estimator": [
+    "ev charging time calculator",
+    "how long to charge an ev",
+    "ev charge time estimator",
+    "electric car charging time",
+    "ev charging duration calculator",
+  ],
+  "ev-home-charger-payback-calculator": [
+    "home ev charger payback calculator",
+    "is a level 2 charger worth it",
+    "ev home charger savings calculator",
+    "ev charger return on investment",
+    "level 2 charger cost benefit",
+  ],
+  "ev-battery-degradation-estimator": [
+    "ev battery degradation calculator",
+    "electric car battery health estimator",
+    "ev range degradation by year",
+    "ev battery lifespan calculator",
+    "battery degradation forecast ev",
+  ],
 };
 
 export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
@@ -301,4 +343,16 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Look up Roblox player profile data by username or user ID, including avatar, display name, and social counts.",
   "ib-buying-power-simulator":
     "Estimate Interactive Brokers style remaining stock buying power from existing positions with simplified Reg-T assumptions.",
+  "options-breakeven-pl-calculator":
+    "Calculate call and put option breakeven price, max profit, max loss, and expiration P/L table for single-leg long or short positions.",
+  "covered-call-return-calculator":
+    "Calculate covered call premium income, breakeven, called-away return, and annualized yield with expiration scenario analysis.",
+  "cash-secured-put-yield-calculator":
+    "Estimate cash-secured put income, collateral return, breakeven price, assignment basis, and annualized yield for option income strategies.",
+  "ev-charge-time-estimator":
+    "Estimate EV charging time from current battery percentage to target level with charger power, charging loss, and electricity cost inputs.",
+  "ev-home-charger-payback-calculator":
+    "Calculate EV home charger payback period, monthly savings, and long-term ROI using home/public charging mix assumptions.",
+  "ev-battery-degradation-estimator":
+    "Forecast EV battery degradation, expected range decline, and replacement reserve planning based on mileage, fast-charging share, and climate profile.",
 };

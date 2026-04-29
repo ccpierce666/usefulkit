@@ -19,7 +19,10 @@ import { CompressPdfTool } from "@/components/compress-pdf-tool";
 import { EmojiCatalogTool } from "@/components/emoji-catalog-tool";
 import { ExcelToPdfTool } from "@/components/excel-to-pdf-tool";
 import { EvChargingCostCalculatorTool } from "@/components/ev-charging-cost-calculator-tool";
+import { EvChargeTimeEstimatorTool } from "@/components/ev-charge-time-estimator-tool";
+import { EvHomeChargerPaybackTool } from "@/components/ev-home-charger-payback-tool";
 import { EvTripChargingCostPlannerTool } from "@/components/ev-trip-charging-cost-planner-tool";
+import { EvBatteryDegradationEstimatorTool } from "@/components/ev-battery-degradation-estimator-tool";
 import { GifCompressorTool } from "@/components/gif-compressor-tool";
 import { GifToMp4Tool } from "@/components/gif-to-mp4-tool";
 import { HairstyleTryOnTool } from "@/components/hairstyle-try-on-tool";
@@ -38,6 +41,9 @@ import { MarkupMarginCalculatorTool } from "@/components/markup-margin-calculato
 import { MergePdfTool } from "@/components/merge-pdf-tool";
 import { Mp4ToGifTool } from "@/components/mp4-to-gif-tool";
 import { OldPhotoRestorationTool } from "@/components/old-photo-restoration-tool";
+import { OptionsBreakevenPlCalculatorTool } from "@/components/options-breakeven-pl-calculator-tool";
+import { CoveredCallReturnCalculatorTool } from "@/components/covered-call-return-calculator-tool";
+import { CashSecuredPutYieldCalculatorTool } from "@/components/cash-secured-put-yield-calculator-tool";
 import { PercentageCalculatorTool } from "@/components/percentage-calculator-tool";
 import { PaycheckCalculatorTool } from "@/components/paycheck-calculator-tool";
 import { PeriodicTableTool } from "@/components/periodic-table-tool";
@@ -161,6 +167,12 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The tool resolves Roblox username or user ID through public endpoints, then aggregates profile, avatar, and social count data into one view.",
     "ib-buying-power-simulator":
       "The simulator estimates initial and maintenance margin usage from A/B/C stock position values, then projects remaining buying power from your net liquidation value and assumed initial margin rate.",
+    "options-breakeven-pl-calculator":
+      "The calculator applies option payoff formulas at expiration for long/short call and put positions, then derives breakeven, max risk, and a price-scenario P/L table using the standard 100-share contract multiplier.",
+    "covered-call-return-calculator":
+      "The covered call calculator combines long stock with a short call obligation to estimate premium income, called-away return, annualized yield, and capped upside across expiration outcomes.",
+    "cash-secured-put-yield-calculator":
+      "The cash-secured put calculator models premium income versus collateral at risk, then estimates breakeven, assignment basis, annualized return, and expiration scenario P/L.",
     "word-counter":
       "The editor tokenizes text into words, characters, lines, and sentence boundaries in real time, then estimates reading time from word count.",
     "character-counter":
@@ -195,6 +207,12 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The estimator combines state electricity assumptions, vehicle efficiency, and charging mix to project monthly and annual EV fueling cost.",
     "ev-trip-charging-cost-planner":
       "Trip model converts route distance into kWh demand, estimates charging stops from usable battery window, and compares EV versus gas cost.",
+    "ev-charge-time-estimator":
+      "Charge-time model calculates required battery energy between start and target SoC, adjusts for charging loss, and divides by charger power to estimate total session duration and cost.",
+    "ev-home-charger-payback-calculator":
+      "Payback model compares monthly charging spend before vs after home charger installation, then divides net install cost by monthly savings to estimate break-even months.",
+    "ev-battery-degradation-estimator":
+      "Degradation model applies annual capacity-loss assumptions adjusted by fast-charging share, mileage intensity, and climate stress to project future range and battery health.",
     "pdf-summarizer":
       "The summarizer extracts document text, ranks sentence salience, and returns concise key-point output for quick review workflows.",
     "merge-pdf":
@@ -668,6 +686,42 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Use your observed broker requirements as inputs when possible. If unknown, many users start with 50% initial and 25% maintenance for a rough stock-only estimate.",
       },
     ],
+    "options-breakeven-pl-calculator": [
+      {
+        question: "Does this include implied volatility or Greeks?",
+        answer:
+          "No. This MVP focuses on expiration payoff only. It does not model IV changes, theta decay path, delta/gamma exposure, or early assignment behavior.",
+      },
+      {
+        question: "Is max loss always limited for options?",
+        answer:
+          "Only some positions have limited risk. Long options have limited loss to premium paid, while short naked options can have very large or theoretically unlimited loss.",
+      },
+    ],
+    "covered-call-return-calculator": [
+      {
+        question: "What does return if called away mean?",
+        answer:
+          "It is the total return if the stock closes at or above strike at expiration and your shares are sold at strike, including both stock gain and premium income.",
+      },
+      {
+        question: "Can covered calls still lose money?",
+        answer:
+          "Yes. Premium provides limited downside buffer, but a large stock decline can still produce a net loss on the covered-call position.",
+      },
+    ],
+    "cash-secured-put-yield-calculator": [
+      {
+        question: "What is the breakeven for a cash-secured put?",
+        answer:
+          "Breakeven at expiration is strike minus premium received per share. If assigned below that level, the position can be negative.",
+      },
+      {
+        question: "Why is collateral required?",
+        answer:
+          "Cash-secured puts reserve enough cash to buy shares at strike if assigned, which defines the strategy's capital requirement and return-on-collateral metric.",
+      },
+    ],
     "word-counter": [
       {
         question: "Does word count include numbers and symbols?",
@@ -831,6 +885,42 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Yes. State selection changes default electricity assumptions, which directly affects estimated charging cost.",
       },
     ],
+    "ev-charge-time-estimator": [
+      {
+        question: "Why is real charging time sometimes longer than estimated?",
+        answer:
+          "Real-world charging speed can taper at higher SoC, vary by charger sharing, and slow in cold or hot conditions, so actual sessions may take longer than a simple kW estimate.",
+      },
+      {
+        question: "Should I use battery energy or wall energy for cost?",
+        answer:
+          "Use wall energy for cost estimates because charging losses mean grid energy is higher than battery energy added.",
+      },
+    ],
+    "ev-home-charger-payback-calculator": [
+      {
+        question: "What most affects charger payback time?",
+        answer:
+          "Monthly mileage, the price gap between home and public charging, and your home-charging share after installation drive payback the most.",
+      },
+      {
+        question: "Can rebates and tax credits be included?",
+        answer:
+          "Yes. Enter rebates or credits as a reduction in net install cost to model a more realistic break-even period.",
+      },
+    ],
+    "ev-battery-degradation-estimator": [
+      {
+        question: "Is this a guarantee of future battery health?",
+        answer:
+          "No. It is a planning estimate using simplified assumptions. Real degradation varies by chemistry, BMS behavior, charging habits, climate, and maintenance.",
+      },
+      {
+        question: "Why does fast charging share matter?",
+        answer:
+          "Higher DC fast-charge usage can increase thermal and cycle stress over time, which may accelerate long-term capacity fade compared with mostly Level 2 charging.",
+      },
+    ],
     "subscription-waste-finder": [
       {
         question: "What columns should my CSV include?",
@@ -913,6 +1003,21 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Inputs: net liquidation value, each position market value, and initial/maintenance margin rates.",
       "Outputs: margin used, initial excess, maintenance excess, and remaining estimated buying power.",
     ],
+    "options-breakeven-pl-calculator": [
+      "Calculate expiration payoff for single-leg call/put option positions.",
+      "Inputs: long/short side, strike, premium, contracts, and underlying price.",
+      "Outputs: breakeven, max profit/loss, premium cash flow, and scenario P/L table.",
+    ],
+    "covered-call-return-calculator": [
+      "Estimate covered call income and capped upside return for a stock position.",
+      "Inputs: stock cost basis, strike, premium, share count, and DTE.",
+      "Outputs: breakeven, max profit if called, annualized yield, and expiration scenario table.",
+    ],
+    "cash-secured-put-yield-calculator": [
+      "Estimate short put income metrics using fully reserved cash collateral assumptions.",
+      "Inputs: stock price, strike, premium, contracts, and DTE.",
+      "Outputs: breakeven, premium yield on collateral, assignment basis, and scenario P/L table.",
+    ],
     "word-counter": [
       "Count words, characters, lines, and estimated reading time while drafting content.",
       "Inputs: pasted or typed text.",
@@ -987,6 +1092,21 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Plan charging stops, charging time, and trip energy cost for long EV routes.",
       "Inputs: trip distance, battery assumptions, charging strategy.",
       "Outputs: stop count, charging duration, and EV vs gas trip cost.",
+    ],
+    "ev-charge-time-estimator": [
+      "Estimate EV charging session duration from start SoC to target SoC.",
+      "Inputs: battery capacity, start/target SoC, charger power, and charging loss.",
+      "Outputs: charge time, wall energy required, and estimated charging cost.",
+    ],
+    "ev-home-charger-payback-calculator": [
+      "Calculate Level 2 home charger payback based on charging mix and rate difference.",
+      "Inputs: monthly miles, EV efficiency, home/public rates, install cost, and rebates.",
+      "Outputs: monthly savings, break-even months, and 3-year/5-year net impact.",
+    ],
+    "ev-battery-degradation-estimator": [
+      "Forecast EV battery health and expected range decline over ownership years.",
+      "Inputs: original range, annual miles, fast-charge share, climate profile, and base degradation.",
+      "Outputs: projected battery health, usable kWh, estimated range, and reserve-planning amount.",
     ],
     "merge-pdf": [
       "Combine multiple PDFs into one ordered document.",
@@ -1176,6 +1296,21 @@ function buildMethodology(tool: ToolItem): string[] {
       "Initial excess is estimated as net liquidation value minus total initial margin required across A/B/C positions.",
       "Remaining buying power is approximated by dividing initial excess by the assumed initial margin rate for the next trade.",
     ],
+    "options-breakeven-pl-calculator": [
+      "Expiration intrinsic value is computed from max(0, S-K) for calls and max(0, K-S) for puts.",
+      "Per-share P/L equals intrinsic minus premium for long positions, and premium minus intrinsic for short positions.",
+      "Total position P/L is per-share P/L multiplied by contracts and the standard 100-share option contract multiplier.",
+    ],
+    "covered-call-return-calculator": [
+      "Covered call payoff is modeled as long stock plus short call, capping upside at strike while retaining premium income.",
+      "Max profit equals (strike - cost basis + premium) multiplied by share count when stock is at/above strike at expiration.",
+      "Static and annualized returns are computed from premium or called-away outcomes divided by initial stock capital.",
+    ],
+    "cash-secured-put-yield-calculator": [
+      "Cash-secured put payoff is modeled as short put with full collateral equal to strike times contract shares.",
+      "Breakeven equals strike minus premium, and assignment basis is derived directly from that breakeven level.",
+      "Return-on-collateral and annualized yield are calculated from premium income relative to reserved cash and DTE.",
+    ],
     "time-card-calculator": [
       "Daily worked minutes = (clock out - clock in) - break minutes, with overnight support.",
       "Weekly total is summed across days, then split into regular and overtime buckets.",
@@ -1285,6 +1420,21 @@ function buildMethodology(tool: ToolItem): string[] {
       "The image is normalized to a safe working size, then passed through denoise and tonal enhancement stages.",
       "Pixel-level adjustments rebalance contrast, saturation, and color fade to recover visual clarity.",
       "Scratch reduction identifies abrupt outlier pixels and blends them with neighboring context to reduce visible defects.",
+    ],
+    "ev-charge-time-estimator": [
+      "Battery energy added is derived from battery capacity multiplied by the selected SoC difference.",
+      "Wall energy accounts for charging losses: wall energy = battery energy / (1 - loss rate).",
+      "Charging duration is estimated as wall energy divided by charger power, and cost equals wall energy times electricity rate.",
+    ],
+    "ev-home-charger-payback-calculator": [
+      "Monthly kWh demand is estimated from monthly miles divided by EV efficiency (mi/kWh).",
+      "Before/after monthly charging cost is modeled using home/public charging shares and per-kWh rates.",
+      "Payback period equals net install cost divided by monthly savings when savings are positive.",
+    ],
+    "ev-battery-degradation-estimator": [
+      "Annual degradation starts from a base rate and is adjusted by usage stress factors such as DC fast-charge share and climate profile.",
+      "Projected battery health uses compounded decay across ownership years to estimate remaining capacity.",
+      "Estimated range and replacement reserve are derived from projected remaining capacity and user-entered replacement cost assumptions.",
     ],
   };
 
@@ -1476,6 +1626,24 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Calculate markup, margin, and profit instantly.",
               "Use results to optimize product pricing.",
             ]
+        : tool.slug === "options-breakeven-pl-calculator"
+          ? [
+              "Choose call/put and long/short position type.",
+              "Enter underlying price, strike, premium per share, and contracts.",
+              "Review breakeven, max risk, and expiration P/L scenarios.",
+            ]
+        : tool.slug === "covered-call-return-calculator"
+          ? [
+              "Enter stock price, cost basis, strike, premium, and share count.",
+              "Set expiration days to compare period and annualized return.",
+              "Review breakeven, called-away return, and expiration P/L scenarios.",
+            ]
+        : tool.slug === "cash-secured-put-yield-calculator"
+          ? [
+              "Enter stock price, put strike, premium, contracts, and DTE.",
+              "Review collateral requirement and premium return metrics.",
+              "Check breakeven, assignment basis, and expiration P/L outcomes.",
+            ]
         : tool.slug === "time-zone-converter"
           ? [
               "Pick timezones and work windows for each participant.",
@@ -1650,6 +1818,24 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Set charging strategy assumptions like charge window, DC rate, and stop overhead.",
               "Get charging stops, trip charging time, EV cost, and gas-trip comparison.",
             ]
+        : tool.slug === "ev-charge-time-estimator"
+          ? [
+              "Enter battery size, start SoC, target SoC, and charger power.",
+              "Set charging loss and electricity rate assumptions.",
+              "Get estimated charge time, energy required, and total session cost.",
+            ]
+        : tool.slug === "ev-home-charger-payback-calculator"
+          ? [
+              "Enter mileage, EV efficiency, and home/public charging rates.",
+              "Set current vs future home-charging share plus install cost and rebates.",
+              "Review monthly savings, payback months, and long-term ROI impact.",
+            ]
+        : tool.slug === "ev-battery-degradation-estimator"
+          ? [
+              "Enter original range, battery size, annual mileage, and ownership years.",
+              "Set base degradation, fast-charge share, and climate profile.",
+              "Get projected battery health, expected range decline, and reserve planning value.",
+            ]
         : tool.slug === "md5-tool"
           ? [
               "Enter any text to generate its MD5 hash instantly.",
@@ -1800,6 +1986,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "days-between-dates" ? <DaysBetweenDatesTool /> : null}
       {tool.slug === "days-from-today" ? <DaysFromTodayTool /> : null}
       {tool.slug === "markup-margin-calculator" ? <MarkupMarginCalculatorTool /> : null}
+      {tool.slug === "options-breakeven-pl-calculator" ? <OptionsBreakevenPlCalculatorTool /> : null}
+      {tool.slug === "covered-call-return-calculator" ? <CoveredCallReturnCalculatorTool /> : null}
+      {tool.slug === "cash-secured-put-yield-calculator" ? <CashSecuredPutYieldCalculatorTool /> : null}
       {tool.slug === "ib-buying-power-simulator" ? <IbBuyingPowerSimulatorTool /> : null}
       {tool.slug === "time-zone-converter" ? <TimeZoneMeetingPlannerTool /> : null}
       {tool.slug === "id-list-formatter" ? <IdListFormatterTool /> : null}
@@ -1841,6 +2030,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
           <EvTripChargingCostPlannerTool />
         </Suspense>
       ) : null}
+      {tool.slug === "ev-charge-time-estimator" ? <EvChargeTimeEstimatorTool /> : null}
+      {tool.slug === "ev-home-charger-payback-calculator" ? <EvHomeChargerPaybackTool /> : null}
+      {tool.slug === "ev-battery-degradation-estimator" ? <EvBatteryDegradationEstimatorTool /> : null}
       {tool.slug === "currency-converter" ? <CurrencyConverterTool /> : null}
       {tool.slug === "bmi-calculator" ? <BmiCalculatorTool /> : null}
       {tool.slug === "unit-converter" ? <UnitConverterTool /> : null}
@@ -1871,6 +2063,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "days-between-dates" &&
       tool.slug !== "days-from-today" &&
       tool.slug !== "markup-margin-calculator" &&
+      tool.slug !== "options-breakeven-pl-calculator" &&
+      tool.slug !== "covered-call-return-calculator" &&
+      tool.slug !== "cash-secured-put-yield-calculator" &&
       tool.slug !== "ib-buying-power-simulator" &&
       tool.slug !== "time-zone-converter" &&
       tool.slug !== "id-list-formatter" &&
@@ -1902,6 +2097,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "quarterly-tax-safe-pay-planner" &&
       tool.slug !== "ev-charging-cost-calculator" &&
       tool.slug !== "ev-trip-charging-cost-planner" &&
+      tool.slug !== "ev-charge-time-estimator" &&
+      tool.slug !== "ev-home-charger-payback-calculator" &&
+      tool.slug !== "ev-battery-degradation-estimator" &&
       tool.slug !== "currency-converter" &&
       tool.slug !== "bmi-calculator" &&
       tool.slug !== "unit-converter" &&

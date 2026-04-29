@@ -401,6 +401,13 @@ export const tools: ToolItem[] = [
     keyword: "markup margin calculator",
   },
   {
+    slug: "ib-buying-power-simulator",
+    name: "IB Buying Power Simulator",
+    summary: "Estimate remaining stock buying power from A/B/C positions under simplified margin assumptions.",
+    category: "converters",
+    keyword: "ib buying power calculator",
+  },
+  {
     slug: "currency-converter",
     name: "Currency Converter",
     summary: "Convert between USD, EUR, GBP, CAD, AUD, JPY, and CNY.",

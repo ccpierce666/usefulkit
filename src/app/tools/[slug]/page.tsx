@@ -24,6 +24,7 @@ import { GifCompressorTool } from "@/components/gif-compressor-tool";
 import { GifToMp4Tool } from "@/components/gif-to-mp4-tool";
 import { HairstyleTryOnTool } from "@/components/hairstyle-try-on-tool";
 import { HeicToJpgTool } from "@/components/heic-to-jpg-tool";
+import { IbBuyingPowerSimulatorTool } from "@/components/ib-buying-power-simulator-tool";
 import { IdListFormatterTool } from "@/components/id-list-formatter-tool";
 import { ImageCompressorTool } from "@/components/image-compressor-tool";
 import { ImageConverterTool } from "@/components/image-converter-tool";
@@ -158,6 +159,64 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The tool normalizes your company query and prepares source-specific search URLs, so you can validate legal, commercial, and reputation signals in parallel.",
     "roblox-player-lookup":
       "The tool resolves Roblox username or user ID through public endpoints, then aggregates profile, avatar, and social count data into one view.",
+    "ib-buying-power-simulator":
+      "The simulator estimates initial and maintenance margin usage from A/B/C stock position values, then projects remaining buying power from your net liquidation value and assumed initial margin rate.",
+    "word-counter":
+      "The editor tokenizes text into words, characters, lines, and sentence boundaries in real time, then estimates reading time from word count.",
+    "character-counter":
+      "The tool tracks visible characters, whitespace, and line breaks to support platform-specific text limits and validation.",
+    "case-converter":
+      "Text is transformed using deterministic casing rules for lower, upper, title, and sentence modes while preserving source punctuation.",
+    "remove-line-breaks":
+      "The tool normalizes newline characters and replaces them with your selected separator, producing a single clean line for scripts or SQL usage.",
+    "id-list-formatter":
+      "Each input line is trimmed and merged with your suffix symbol to generate copy-ready IDs for queries, scripts, and batch jobs.",
+    "currency-converter":
+      "The converter applies selected base rates and directional currency pairs to calculate equivalent values with consistent decimal formatting.",
+    "sales-tax-calculator":
+      "Add-tax mode computes tax from a pre-tax base, while extract-tax mode reverses the formula from tax-included totals.",
+    "discount-tax-calculator":
+      "The calculator applies discount first, then computes sales tax on the discounted amount to produce checkout-accurate totals.",
+    "tip-calculator":
+      "Tip amount is derived from bill subtotal and tip percent, then split logic divides final payable totals across party size.",
+    "markup-margin-calculator":
+      "The tool solves pricing equations between cost, selling price, markup percent, and margin percent depending on selected input mode.",
+    "apr-calculator":
+      "APR mode uses loan principal, term, and payment assumptions to estimate annualized borrowing cost under fixed-rate repayment behavior.",
+    "unit-converter":
+      "Values are converted through category-specific base units so every unit pair in length, weight, temperature, and area remains internally consistent.",
+    "tdee-calculator":
+      "The tool estimates BMR from body inputs and multiplies by activity factor to project maintenance calories and cut/bulk targets.",
+    "water-intake-calculator":
+      "Hydration target starts from body-weight baseline, then adjusts for activity duration and heat level before returning cups and liters.",
+    "time-zone-converter":
+      "The planner translates local work windows across time zones, then computes overlap intervals that satisfy meeting duration constraints.",
+    "ev-charging-cost-calculator":
+      "The estimator combines state electricity assumptions, vehicle efficiency, and charging mix to project monthly and annual EV fueling cost.",
+    "ev-trip-charging-cost-planner":
+      "Trip model converts route distance into kWh demand, estimates charging stops from usable battery window, and compares EV versus gas cost.",
+    "pdf-summarizer":
+      "The summarizer extracts document text, ranks sentence salience, and returns concise key-point output for quick review workflows.",
+    "merge-pdf":
+      "The merger preserves your file order, appends each document page set in sequence, and exports one combined PDF output.",
+    "pdf-to-jpg":
+      "Each PDF page is rasterized at configured render scale, then encoded to JPG so pages can be reused as slide or image assets.",
+    "png-to-jpg":
+      "Transparent PNG pixels are composited onto a chosen background color before JPG encoding to avoid black or undefined alpha output.",
+    "jpg-to-png":
+      "The tool decodes JPG and re-encodes PNG losslessly, commonly used when workflows require transparency-capable or non-lossy target format.",
+    "image-compressor":
+      "The image compressor re-encodes source frames with quality and format controls to reduce payload size while preserving usable visual quality.",
+    "image-converter":
+      "The converter normalizes source pixels on canvas and exports them in selected format, handling alpha behavior differences between JPG and PNG.",
+    "image-resizer":
+      "Resize mode redraws source image to target dimensions or social presets, balancing output size and aspect behavior for publishing needs.",
+    "subscription-waste-finder":
+      "The analyzer groups recurring transactions by merchant pattern and billing interval to flag duplicates and potentially unused subscriptions.",
+    "subscription-downgrade-optimizer":
+      "The optimizer models plan alternatives such as ad tiers, annual billing, and bundle scenarios to estimate potential monthly savings.",
+    "quarterly-tax-safe-pay-planner":
+      "Planner estimates safe quarterly payment targets from projected income, effective tax assumptions, and withholding offsets across due dates.",
     "compress-pdf":
       "The tool rewrites PDF object streams with optimized save settings to reduce file size for uploads, sharing, and browser-based document workflows.",
     "split-pdf":
@@ -547,13 +606,6 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Yes. Use the JPG quality slider before conversion to balance image clarity and file size.",
       },
     ],
-    "currency-converter": [
-      {
-        question: "Where do currency rates come from?",
-        answer:
-          "The tool uses configured reference rates in the interface. You can adjust rates when needed for planning scenarios.",
-      },
-    ],
     "loan-payment-calculator": [
       {
         question: "Is this loan result exact for my lender?",
@@ -602,6 +654,174 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
         question: "What player data can this tool return?",
         answer:
           "It can return public profile fields such as display name, username, avatar, account creation date, and social counts when available from Roblox public endpoints.",
+      },
+    ],
+    "ib-buying-power-simulator": [
+      {
+        question: "Is this simulator exactly the same as IBKR real-time margin?",
+        answer:
+          "No. This tool is a simplified estimator. IBKR live margin, house rules, concentration risk, and intraday changes can produce different values.",
+      },
+      {
+        question: "How should I set initial and maintenance margin rates?",
+        answer:
+          "Use your observed broker requirements as inputs when possible. If unknown, many users start with 50% initial and 25% maintenance for a rough stock-only estimate.",
+      },
+    ],
+    "word-counter": [
+      {
+        question: "Does word count include numbers and symbols?",
+        answer:
+          "Word rules can vary by platform, but this tool uses practical text-token boundaries suitable for blog drafts, docs, and SEO writing workflows.",
+      },
+      {
+        question: "How is reading time estimated?",
+        answer:
+          "Reading time is a quick estimate from total words and average reading speed assumptions, useful for content planning but not a strict benchmark.",
+      },
+    ],
+    "currency-converter": [
+      {
+        question: "Are conversion rates live market quotes?",
+        answer:
+          "This page is designed for planning and quick conversion workflows. Always confirm execution rates in your broker or bank before trading or settlement.",
+      },
+      {
+        question: "Can I use this for invoice estimates?",
+        answer:
+          "Yes. It is useful for estimate-level planning, but contracts and settlement should use your official quoted or booked exchange rate.",
+      },
+    ],
+    "sales-tax-calculator": [
+      {
+        question: "Does this support reverse tax calculation from final price?",
+        answer:
+          "Yes. Use Total-to-Pre-tax mode to extract pre-tax amount and tax amount when your input already includes tax.",
+      },
+      {
+        question: "Can I use local city tax rates?",
+        answer:
+          "Yes. Enter any combined tax rate you need. For compliance workflows, verify jurisdiction-specific rules separately.",
+      },
+    ],
+    "tip-calculator": [
+      {
+        question: "Can the bill be split equally across people?",
+        answer:
+          "Yes. The tool calculates total and per-person amount so group payments are easier to settle quickly.",
+      },
+      {
+        question: "Should I include tax before calculating tip?",
+        answer:
+          "That depends on local custom. You can adjust inputs to model either pre-tax or post-tax tipping behavior.",
+      },
+    ],
+    "unit-converter": [
+      {
+        question: "Will this handle decimal and scientific values?",
+        answer:
+          "Yes. Standard decimal inputs work well for engineering, study, and day-to-day conversion tasks.",
+      },
+      {
+        question: "How accurate are conversions?",
+        answer:
+          "The tool uses deterministic conversion factors and formulas. For regulated or lab-grade work, follow your official standards.",
+      },
+    ],
+    "tdee-calculator": [
+      {
+        question: "Is TDEE a guaranteed calorie target?",
+        answer:
+          "No. TDEE is an estimate. Real maintenance can vary by metabolism, activity tracking quality, and lifestyle changes.",
+      },
+      {
+        question: "How often should I recalculate?",
+        answer:
+          "Recalculate after meaningful weight or activity changes so your calorie planning stays aligned with current conditions.",
+      },
+    ],
+    "water-intake-calculator": [
+      {
+        question: "Is this hydration target medical advice?",
+        answer:
+          "No. It is a planning estimate. Medical conditions, medication, and climate can change hydration needs significantly.",
+      },
+      {
+        question: "Should I include workout days separately?",
+        answer:
+          "Yes. Add activity minutes and heat conditions to better reflect days with higher fluid loss.",
+      },
+    ],
+    "time-zone-converter": [
+      {
+        question: "Does this account for daylight saving changes?",
+        answer:
+          "The planner follows timezone offsets, but you should always double-check near DST switch dates for critical meetings.",
+      },
+      {
+        question: "Can I plan across US and Asia teams?",
+        answer:
+          "Yes. The overlap view is designed for distributed teams and helps find workable windows across multiple regions.",
+      },
+    ],
+    "image-compressor": [
+      {
+        question: "Why does compressed image size sometimes increase?",
+        answer:
+          "If the source is already optimized, re-encoding can occasionally increase size. Try changing output format or quality to improve results.",
+      },
+      {
+        question: "Which format is best for web delivery?",
+        answer:
+          "WebP often gives better web size efficiency, while JPG remains broadly compatible for most publishing workflows.",
+      },
+    ],
+    "image-converter": [
+      {
+        question: "Will converting to JPG remove transparency?",
+        answer:
+          "Yes. JPG does not support alpha transparency. This tool lets you set a background color before exporting JPG.",
+      },
+      {
+        question: "Is PNG always smaller than JPG?",
+        answer:
+          "Not always. PNG is lossless and can be larger for photos. JPG or WebP can be smaller for photographic content.",
+      },
+    ],
+    "image-resizer": [
+      {
+        question: "How do I avoid stretching images?",
+        answer:
+          "Enable aspect-ratio lock when resizing. Use presets only when target aspect intentionally differs from source.",
+      },
+      {
+        question: "Can I prepare social-media dimensions quickly?",
+        answer:
+          "Yes. Built-in presets help generate common social dimensions with fewer manual edits.",
+      },
+    ],
+    "png-to-jpg": [
+      {
+        question: "Why can converted JPG look different from PNG?",
+        answer:
+          "PNG transparency must be flattened into a background color in JPG, and JPG compression can introduce small visual differences.",
+      },
+      {
+        question: "What background should I use for transparent PNGs?",
+        answer:
+          "Use white for docs/ecommerce defaults, or match your target page color to avoid visible edge halos.",
+      },
+    ],
+    "jpg-to-png": [
+      {
+        question: "Does JPG to PNG improve photo quality?",
+        answer:
+          "Converting to PNG does not restore information lost in JPG compression. It mainly changes format compatibility.",
+      },
+      {
+        question: "When should I convert JPG to PNG?",
+        answer:
+          "Use PNG when your downstream workflow requires lossless editing or consistent non-JPG format support.",
       },
     ],
     "ev-charging-cost-calculator": [
@@ -687,6 +907,151 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Look up public Roblox player profile information from username or user ID.",
       "Inputs: Roblox username or numeric user ID.",
       "Outputs: avatar, display name, account creation date, and social counts.",
+    ],
+    "ib-buying-power-simulator": [
+      "Estimate remaining buying power from three stock positions (A/B/C) using configurable margin assumptions.",
+      "Inputs: net liquidation value, each position market value, and initial/maintenance margin rates.",
+      "Outputs: margin used, initial excess, maintenance excess, and remaining estimated buying power.",
+    ],
+    "word-counter": [
+      "Count words, characters, lines, and estimated reading time while drafting content.",
+      "Inputs: pasted or typed text.",
+      "Outputs: real-time count metrics for writing, publishing, and SEO workflows.",
+    ],
+    "character-counter": [
+      "Track character limits for posts, ads, titles, and form fields.",
+      "Inputs: any text content.",
+      "Outputs: total characters, optional whitespace awareness, and quick limit checking.",
+    ],
+    "case-converter": [
+      "Convert text casing for documents, code snippets, and content formatting.",
+      "Inputs: source text and target case style.",
+      "Outputs: converted text for immediate copy and reuse.",
+    ],
+    "currency-converter": [
+      "Estimate cross-currency amounts quickly for planning and budgeting.",
+      "Inputs: amount, source currency, target currency.",
+      "Outputs: converted value using current configured reference rates.",
+    ],
+    "sales-tax-calculator": [
+      "Calculate final checkout totals or reverse-calculate pre-tax values.",
+      "Inputs: amount and sales-tax rate with forward/reverse mode.",
+      "Outputs: tax amount, pre-tax amount, and final total.",
+    ],
+    "discount-tax-calculator": [
+      "Model retail checkout totals when discount and sales tax both apply.",
+      "Inputs: original price, discount rate, tax rate.",
+      "Outputs: discounted subtotal, tax amount, and final payable total.",
+    ],
+    "tip-calculator": [
+      "Compute tip and split bill amounts for group payments.",
+      "Inputs: bill subtotal, tip rate, and party size.",
+      "Outputs: tip amount, total bill, and per-person share.",
+    ],
+    "markup-margin-calculator": [
+      "Solve pricing math between cost, selling price, markup, and margin.",
+      "Inputs: known pricing fields based on selected mode.",
+      "Outputs: inferred pricing metrics for quoting and planning.",
+    ],
+    "apr-calculator": [
+      "Estimate APR or payment impact for fixed-term loan assumptions.",
+      "Inputs: principal, term, and either APR or payment target.",
+      "Outputs: estimated APR/payment plus interest summary.",
+    ],
+    "unit-converter": [
+      "Convert units across length, weight, area, and temperature categories.",
+      "Inputs: value, source unit, target unit.",
+      "Outputs: instant converted value with deterministic formulas.",
+    ],
+    "tdee-calculator": [
+      "Estimate maintenance calories from body metrics and activity level.",
+      "Inputs: age, sex, height, weight, activity profile.",
+      "Outputs: BMR, TDEE, and suggested cut/bulk targets.",
+    ],
+    "water-intake-calculator": [
+      "Estimate daily hydration targets with activity and climate adjustments.",
+      "Inputs: body weight, activity minutes, heat condition.",
+      "Outputs: recommended daily water intake in liters and cups.",
+    ],
+    "time-zone-converter": [
+      "Find practical meeting windows across multiple time zones.",
+      "Inputs: participant time zones, local work windows, duration.",
+      "Outputs: overlap slots suitable for scheduling distributed teams.",
+    ],
+    "ev-charging-cost-calculator": [
+      "Estimate EV charging spend with state electricity assumptions and charging mix.",
+      "Inputs: vehicle efficiency, mileage, home/public charging ratio.",
+      "Outputs: monthly and annual EV cost plus gas comparison.",
+    ],
+    "ev-trip-charging-cost-planner": [
+      "Plan charging stops, charging time, and trip energy cost for long EV routes.",
+      "Inputs: trip distance, battery assumptions, charging strategy.",
+      "Outputs: stop count, charging duration, and EV vs gas trip cost.",
+    ],
+    "merge-pdf": [
+      "Combine multiple PDFs into one ordered document.",
+      "Inputs: two or more PDF files and preferred merge order.",
+      "Outputs: a single merged PDF ready for download.",
+    ],
+    "pdf-to-jpg": [
+      "Convert each PDF page into an image for slides, thumbnails, or previews.",
+      "Inputs: one PDF and optional JPG quality choice.",
+      "Outputs: page-by-page JPG files for download.",
+    ],
+    "pdf-summarizer": [
+      "Generate a concise summary from PDF text content.",
+      "Inputs: one text-readable PDF document.",
+      "Outputs: key points and compact summary text for fast review.",
+    ],
+    "png-to-jpg": [
+      "Convert PNG to JPG with transparency background control.",
+      "Inputs: PNG file, JPG quality, and background color.",
+      "Outputs: JPG image with size and output preview.",
+    ],
+    "jpg-to-png": [
+      "Convert JPG/JPEG images to PNG format for workflow compatibility.",
+      "Inputs: JPG or JPEG source image.",
+      "Outputs: PNG file with immediate preview and download.",
+    ],
+    "image-compressor": [
+      "Reduce image file size for faster upload and delivery.",
+      "Inputs: JPG/PNG/WebP plus quality/format options.",
+      "Outputs: compressed file with before/after size comparison.",
+    ],
+    "image-converter": [
+      "Convert images between JPG, PNG, and WebP quickly.",
+      "Inputs: image file and target format settings.",
+      "Outputs: converted image with output stats and preview.",
+    ],
+    "image-resizer": [
+      "Resize images for social media, ads, and web layouts.",
+      "Inputs: source image plus target dimensions or preset.",
+      "Outputs: resized image with download and size feedback.",
+    ],
+    "remove-line-breaks": [
+      "Flatten multiline text into single-line output for SQL and scripts.",
+      "Inputs: multiline text and replacement separator.",
+      "Outputs: normalized one-line text ready to copy.",
+    ],
+    "id-list-formatter": [
+      "Format one-ID-per-line input into delimiter-ready output.",
+      "Inputs: ID list and suffix symbol (comma, semicolon, custom).",
+      "Outputs: batch-formatted ID lines for copy/paste workflows.",
+    ],
+    "subscription-waste-finder": [
+      "Analyze recurring charge CSVs to surface possible subscription waste.",
+      "Inputs: transaction CSV with date, merchant, amount.",
+      "Outputs: recurring charge clusters and suspected waste signals.",
+    ],
+    "subscription-downgrade-optimizer": [
+      "Compare subscription plan strategies to reduce monthly spend.",
+      "Inputs: current costs and strategy toggles (annual, ad-tier, bundle).",
+      "Outputs: estimated optimized total and projected savings.",
+    ],
+    "quarterly-tax-safe-pay-planner": [
+      "Plan quarterly tax payments from projected income assumptions.",
+      "Inputs: annual income estimate, deductions, withholding, tax rate.",
+      "Outputs: suggested quarterly amounts and due-date planning targets.",
     ],
     "compress-pdf": [
       "Reduce PDF file size before sending, uploading, or archiving documents.",
@@ -805,6 +1170,11 @@ function buildMethodology(tool: ToolItem): string[] {
       "Gross pay is derived from salary/hourly inputs and selected pay frequency.",
       "Tax amounts are estimated from user-entered federal, state, local, and FICA assumptions.",
       "Net pay = gross pay - pre-tax deductions - estimated taxes.",
+    ],
+    "ib-buying-power-simulator": [
+      "Each position contributes initial and maintenance requirements based on its market value and configured margin rates.",
+      "Initial excess is estimated as net liquidation value minus total initial margin required across A/B/C positions.",
+      "Remaining buying power is approximated by dividing initial excess by the assumed initial margin rate for the next trade.",
     ],
     "time-card-calculator": [
       "Daily worked minutes = (clock out - clock in) - break minutes, with overnight support.",
@@ -1039,6 +1409,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Choose lookup mode: username or numeric user ID.",
               "Submit your query and fetch public profile information from Roblox endpoints.",
               "Review avatar, account details, and social counts in one panel.",
+            ]
+        : tool.slug === "ib-buying-power-simulator"
+          ? [
+              "Enter your net liquidation value and assumed initial margin for new trades.",
+              "Fill A/B/C position values and margin rates (initial and maintenance).",
+              "Review remaining buying power and margin excess estimates instantly.",
             ]
         : tool.slug === "compress-pdf"
           ? [
@@ -1424,6 +1800,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "days-between-dates" ? <DaysBetweenDatesTool /> : null}
       {tool.slug === "days-from-today" ? <DaysFromTodayTool /> : null}
       {tool.slug === "markup-margin-calculator" ? <MarkupMarginCalculatorTool /> : null}
+      {tool.slug === "ib-buying-power-simulator" ? <IbBuyingPowerSimulatorTool /> : null}
       {tool.slug === "time-zone-converter" ? <TimeZoneMeetingPlannerTool /> : null}
       {tool.slug === "id-list-formatter" ? <IdListFormatterTool /> : null}
       {tool.slug === "image-compressor" ? <ImageCompressorTool /> : null}
@@ -1494,6 +1871,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "days-between-dates" &&
       tool.slug !== "days-from-today" &&
       tool.slug !== "markup-margin-calculator" &&
+      tool.slug !== "ib-buying-power-simulator" &&
       tool.slug !== "time-zone-converter" &&
       tool.slug !== "id-list-formatter" &&
       tool.slug !== "image-compressor" &&

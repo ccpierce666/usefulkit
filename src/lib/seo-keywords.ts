@@ -243,6 +243,13 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "roblox profile finder",
     "roblox player search",
   ],
+  "ib-buying-power-simulator": [
+    "ib buying power calculator",
+    "interactive brokers buying power",
+    "reg t buying power calculator",
+    "stock margin buying power simulator",
+    "ib margin calculator",
+  ],
 };
 
 export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
@@ -292,4 +299,6 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Convert MP4 to GIF online with adjustable duration, frame rate, and output size for social sharing.",
   "roblox-player-lookup":
     "Look up Roblox player profile data by username or user ID, including avatar, display name, and social counts.",
+  "ib-buying-power-simulator":
+    "Estimate Interactive Brokers style remaining stock buying power from existing positions with simplified Reg-T assumptions.",
 };

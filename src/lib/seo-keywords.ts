@@ -117,6 +117,27 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "salary paycheck calculator",
     "hourly paycheck calculator",
   ],
+  "pay-raise-calculator": [
+    "pay raise calculator",
+    "salary increase calculator",
+    "raise percentage calculator",
+    "new salary after raise",
+    "raise take home pay calculator",
+  ],
+  "overtime-pay-calculator": [
+    "overtime pay calculator",
+    "ot pay calculator",
+    "double time pay calculator",
+    "time and a half calculator",
+    "overtime paycheck calculator",
+  ],
+  "w2-vs-1099-calculator": [
+    "1099 vs w2 calculator",
+    "w2 vs contractor calculator",
+    "independent contractor vs employee pay",
+    "1099 take home calculator",
+    "w2 take home vs 1099",
+  ],
   "time-card-calculator": [
     "time sheet calculator",
     "work hours calculator",
@@ -250,6 +271,13 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "stock margin buying power simulator",
     "ib margin calculator",
   ],
+  "etf-move-calculator": [
+    "etf weighted return calculator",
+    "etf fair value move calculator",
+    "index weighted move calculator",
+    "constituent weight contribution calculator",
+    "etf implied move estimator",
+  ],
   "options-breakeven-pl-calculator": [
     "options profit calculator",
     "options breakeven calculator",
@@ -315,6 +343,12 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Add watermark to PDF online, stamp every page with text, and download the marked file in your browser.",
   "paycheck-calculator":
     "Estimate take-home pay with salary or hourly inputs, paycheck tax assumptions, and instant net pay results.",
+  "pay-raise-calculator":
+    "Estimate your new salary after a raise and compare annual, monthly, and take-home pay impact.",
+  "overtime-pay-calculator":
+    "Calculate regular, overtime, and double-time earnings with custom thresholds and pay multipliers.",
+  "w2-vs-1099-calculator":
+    "Compare estimated annual value for W-2 versus 1099 work using taxes, contractor expenses, and benefits assumptions.",
   "time-card-calculator":
     "Track work hours, breaks, overtime, and payroll-ready totals with an easy weekly time card calculator.",
   "old-photo-restoration":
@@ -343,6 +377,8 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Look up Roblox player profile data by username or user ID, including avatar, display name, and social counts.",
   "ib-buying-power-simulator":
     "Estimate Interactive Brokers style remaining stock buying power from existing positions with simplified Reg-T assumptions.",
+  "etf-move-calculator":
+    "Estimate ETF fair move from weighted constituent returns, add sentiment adjustment, and backsolve required move for unmodeled constituents.",
   "options-breakeven-pl-calculator":
     "Calculate call and put option breakeven price, max profit, max loss, and expiration P/L table for single-leg long or short positions.",
   "covered-call-return-calculator":

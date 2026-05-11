@@ -331,11 +331,32 @@ export const tools: ToolItem[] = [
     keyword: "paycheck calculator",
   },
   {
+    slug: "pay-raise-calculator",
+    name: "Pay Raise Calculator",
+    summary: "Estimate how a raise changes annual, monthly, and take-home pay.",
+    category: "converters",
+    keyword: "pay raise calculator",
+  },
+  {
     slug: "time-card-calculator",
     name: "Time Card Calculator",
     summary: "Track weekly work hours, overtime, and gross pay from clock-in entries.",
     category: "converters",
     keyword: "time card calculator",
+  },
+  {
+    slug: "overtime-pay-calculator",
+    name: "Overtime Pay Calculator",
+    summary: "Calculate regular, overtime, and double-time pay based on hourly rate and worked hours.",
+    category: "converters",
+    keyword: "overtime pay calculator",
+  },
+  {
+    slug: "w2-vs-1099-calculator",
+    name: "1099 vs W-2 Take-Home Calculator",
+    summary: "Compare estimated annual value between W-2 and 1099 scenarios with taxes, expenses, and benefits.",
+    category: "converters",
+    keyword: "1099 vs w2 calculator",
   },
   {
     slug: "sales-tax-calculator",
@@ -427,6 +448,13 @@ export const tools: ToolItem[] = [
     summary: "Estimate remaining stock buying power from A/B/C positions under simplified margin assumptions.",
     category: "converters",
     keyword: "ib buying power calculator",
+  },
+  {
+    slug: "etf-move-calculator",
+    name: "ETF Move Recalculator",
+    summary: "Estimate ETF fair move from weighted constituent returns, with sentiment adjustment and backsolve for unmodeled weight.",
+    category: "converters",
+    keyword: "etf weighted return calculator",
   },
   {
     slug: "options-breakeven-pl-calculator",

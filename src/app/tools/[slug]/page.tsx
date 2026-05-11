@@ -28,6 +28,7 @@ import { GifToMp4Tool } from "@/components/gif-to-mp4-tool";
 import { HairstyleTryOnTool } from "@/components/hairstyle-try-on-tool";
 import { HeicToJpgTool } from "@/components/heic-to-jpg-tool";
 import { IbBuyingPowerSimulatorTool } from "@/components/ib-buying-power-simulator-tool";
+import { EtfMoveCalculatorTool } from "@/components/etf-move-calculator-tool";
 import { IdListFormatterTool } from "@/components/id-list-formatter-tool";
 import { ImageCompressorTool } from "@/components/image-compressor-tool";
 import { ImageConverterTool } from "@/components/image-converter-tool";
@@ -46,6 +47,8 @@ import { CoveredCallReturnCalculatorTool } from "@/components/covered-call-retur
 import { CashSecuredPutYieldCalculatorTool } from "@/components/cash-secured-put-yield-calculator-tool";
 import { PercentageCalculatorTool } from "@/components/percentage-calculator-tool";
 import { PaycheckCalculatorTool } from "@/components/paycheck-calculator-tool";
+import { PayRaiseCalculatorTool } from "@/components/pay-raise-calculator-tool";
+import { OvertimePayCalculatorTool } from "@/components/overtime-pay-calculator-tool";
 import { PeriodicTableTool } from "@/components/periodic-table-tool";
 import { PdfToJpgTool } from "@/components/pdf-to-jpg-tool";
 import { PdfSummarizerTool } from "@/components/pdf-summarizer-tool";
@@ -68,6 +71,7 @@ import { TipCalculatorTool } from "@/components/tip-calculator-tool";
 import { UnitConverterTool } from "@/components/unit-converter-tool";
 import { WaterIntakeCalculatorTool } from "@/components/water-intake-calculator-tool";
 import { WebpToJpgTool } from "@/components/webp-to-jpg-tool";
+import { W2Vs1099CalculatorTool } from "@/components/w2-vs-1099-calculator-tool";
 import { WordCounterTool } from "@/components/word-counter-tool";
 import { categoryLabels, getToolBySlug, getToolsByCategory, tools, type ToolItem } from "@/lib/tools";
 
@@ -151,6 +155,12 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
   const slugLogic: Partial<Record<ToolItem["slug"], string>> = {
     "paycheck-calculator":
       "The calculator derives paycheck gross income from salary/hourly mode and pay frequency, then applies pre-tax deductions and tax assumptions (federal/state/local/FICA) to estimate take-home pay.",
+    "pay-raise-calculator":
+      "The calculator models raise impact from either percentage or fixed-dollar increase, then compares annual and monthly changes in gross and estimated net pay using your effective tax assumption.",
+    "overtime-pay-calculator":
+      "Worked time is split into regular, overtime, and optional double-time buckets. Each bucket uses its own multiplier to calculate a complete pay breakdown and blended hourly value.",
+    "w2-vs-1099-calculator":
+      "The comparison estimates W-2 total value and 1099 net cash using business expenses, self-employment tax, income tax, and benefits assumptions so you can evaluate both arrangements consistently.",
     "time-card-calculator":
       "Daily worked time is computed from clock-out minus clock-in minus break minutes, then aggregated weekly. Hours above your configured threshold are classified as overtime and priced with the overtime multiplier.",
     "loan-payment-calculator":
@@ -631,6 +641,42 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Results are estimates based on entered assumptions. Lender fees, insurance, and policy differences can change final numbers.",
       },
     ],
+    "pay-raise-calculator": [
+      {
+        question: "Why is my take-home increase smaller than my gross raise?",
+        answer:
+          "Take-home increase is estimated after taxes. As gross income rises, tax withholding and payroll taxes also rise, so net gain is usually lower than gross gain.",
+      },
+      {
+        question: "Can I include bonus changes in the raise comparison?",
+        answer:
+          "Yes. Enter both current and new annual bonus values. The tool includes bonus differences in annual and monthly gross/net change.",
+      },
+    ],
+    "overtime-pay-calculator": [
+      {
+        question: "Does this use federal or state overtime law rules automatically?",
+        answer:
+          "No. This tool follows your configured thresholds and multipliers. For compliance decisions, always check your state labor rules and employer policy.",
+      },
+      {
+        question: "How should I handle double-time hours?",
+        answer:
+          "Enter only the portion of hours that should be paid at double-time. The remaining non-regular hours are treated as overtime at your overtime multiplier.",
+      },
+    ],
+    "w2-vs-1099-calculator": [
+      {
+        question: "Is this an exact tax filing calculator?",
+        answer:
+          "No. This is a planning estimator based on effective rates and simplified assumptions. Final tax outcomes depend on filing status, deductions, credits, and local rules.",
+      },
+      {
+        question: "Why include W-2 benefits value in the comparison?",
+        answer:
+          "W-2 offers often include benefits like health insurance and employer retirement match. Adding a yearly value makes the W-2 vs 1099 comparison more realistic.",
+      },
+    ],
     "md5-tool": [
       {
         question: "Can this MD5 tool decrypt hashes?",
@@ -684,6 +730,18 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
         question: "How should I set initial and maintenance margin rates?",
         answer:
           "Use your observed broker requirements as inputs when possible. If unknown, many users start with 50% initial and 25% maintenance for a rough stock-only estimate.",
+      },
+    ],
+    "etf-move-calculator": [
+      {
+        question: "Should I normalize weights if my basket is incomplete?",
+        answer:
+          "If you only entered a subset of constituents, normalization helps estimate the move of your modeled basket. Keep raw mode when weights already represent the full ETF.",
+      },
+      {
+        question: "Why can actual ETF move still differ from this estimate?",
+        answer:
+          "Real trading includes intraday reweighting, liquidity effects, derivatives hedging, and sentiment premium/discount. Use this as a fair-move baseline, not an exact tick forecast.",
       },
     ],
     "options-breakeven-pl-calculator": [
@@ -973,6 +1031,21 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Inputs: gross income, pay schedule, pre-tax deductions, and tax-rate assumptions.",
       "Outputs: gross pay, tax breakdown, and net pay per paycheck plus annual estimates.",
     ],
+    "pay-raise-calculator": [
+      "Estimate how a raise changes annual and monthly pay.",
+      "Inputs: current salary, raise percent or amount, bonus change, and effective tax rate.",
+      "Outputs: new salary, gross pay difference, and estimated take-home difference.",
+    ],
+    "overtime-pay-calculator": [
+      "Calculate weekly pay using regular, overtime, and optional double-time hours.",
+      "Inputs: hourly rate, total worked hours, regular threshold, and pay multipliers.",
+      "Outputs: pay breakdown by hour bucket and total gross pay estimate.",
+    ],
+    "w2-vs-1099-calculator": [
+      "Compare estimated value between W-2 employment and 1099 contractor income.",
+      "Inputs: annual gross, tax assumptions, contractor expense ratio, and W-2 benefits value.",
+      "Outputs: W-2 total value, 1099 net cash estimate, and annual difference.",
+    ],
     "time-card-calculator": [
       "Calculate weekly worked hours from daily clock-in and clock-out entries.",
       "Inputs: each day in/out time, break minutes, hourly rate, overtime threshold.",
@@ -1002,6 +1075,11 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Estimate remaining buying power from three stock positions (A/B/C) using configurable margin assumptions.",
       "Inputs: net liquidation value, each position market value, and initial/maintenance margin rates.",
       "Outputs: margin used, initial excess, maintenance excess, and remaining estimated buying power.",
+    ],
+    "etf-move-calculator": [
+      "Estimate an ETF fair move from weighted constituent daily returns.",
+      "Inputs: constituent name, weight, move, optional sentiment adjustment, and optional observed ETF move.",
+      "Outputs: modeled ETF move, final adjusted estimate, and required unmodeled-basket move via backsolve.",
     ],
     "options-breakeven-pl-calculator": [
       "Calculate expiration payoff for single-leg call/put option positions.",
@@ -1291,10 +1369,30 @@ function buildMethodology(tool: ToolItem): string[] {
       "Tax amounts are estimated from user-entered federal, state, local, and FICA assumptions.",
       "Net pay = gross pay - pre-tax deductions - estimated taxes.",
     ],
+    "pay-raise-calculator": [
+      "Raise amount is calculated from either percentage increase or fixed-dollar increase over current base salary.",
+      "Gross annual and monthly differences include optional current/new bonus assumptions.",
+      "Estimated net differences apply the effective tax rate to pre-tax annual totals for a planning-grade take-home view.",
+    ],
+    "overtime-pay-calculator": [
+      "Regular hours are capped at your threshold, and remaining hours are allocated to overtime and optional double-time buckets.",
+      "Each hour bucket is multiplied by its pay-rate multiplier to compute regular, overtime, and double-time earnings.",
+      "Blended hourly rate is total gross pay divided by total worked hours.",
+    ],
+    "w2-vs-1099-calculator": [
+      "W-2 estimate applies income tax and employee FICA to annual gross, then adds optional annual benefits value.",
+      "1099 estimate subtracts business expenses, then applies self-employment tax and income tax on adjusted net business income.",
+      "Difference output is 1099 estimated net cash minus W-2 estimated total value.",
+    ],
     "ib-buying-power-simulator": [
       "Each position contributes initial and maintenance requirements based on its market value and configured margin rates.",
       "Initial excess is estimated as net liquidation value minus total initial margin required across A/B/C positions.",
       "Remaining buying power is approximated by dividing initial excess by the assumed initial margin rate for the next trade.",
+    ],
+    "etf-move-calculator": [
+      "Each row contribution equals weight percent times constituent move percent, then summed as modeled ETF move.",
+      "Optional normalization rescales modeled rows to 100% when you only cover part of the basket.",
+      "Backsolve mode computes required average move for unmodeled weight to match observed ETF move.",
     ],
     "options-breakeven-pl-calculator": [
       "Expiration intrinsic value is computed from max(0, S-K) for calls and max(0, K-S) for puts.",
@@ -1566,6 +1664,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Fill A/B/C position values and margin rates (initial and maintenance).",
               "Review remaining buying power and margin excess estimates instantly.",
             ]
+        : tool.slug === "etf-move-calculator"
+          ? [
+              "Add ETF constituents with their weights and current-day moves.",
+              "Review weighted contribution and the modeled ETF fair move instantly.",
+              "Optionally input observed ETF move to backsolve what the unmodeled basket must be doing.",
+            ]
         : tool.slug === "compress-pdf"
           ? [
               "Upload the PDF you want to reduce in size.",
@@ -1763,6 +1867,24 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Select salary or hourly mode and set pay frequency.",
               "Enter pre-tax deduction and tax rate assumptions.",
               "Review estimated gross, tax breakdown, and take-home pay per paycheck.",
+            ]
+        : tool.slug === "pay-raise-calculator"
+          ? [
+              "Enter your current salary and choose raise mode (percent or amount).",
+              "Add bonus assumptions and an effective tax rate for take-home estimation.",
+              "Review new salary plus annual/monthly gross and net differences.",
+            ]
+        : tool.slug === "overtime-pay-calculator"
+          ? [
+              "Enter hourly rate, total worked hours, and regular-hours threshold.",
+              "Set overtime and optional double-time multipliers.",
+              "Review total gross pay and bucket-level pay breakdown instantly.",
+            ]
+        : tool.slug === "w2-vs-1099-calculator"
+          ? [
+              "Enter annual gross pay and W-2 assumptions (tax, FICA, benefits).",
+              "Enter 1099 assumptions (expense ratio, SE tax, income tax rate).",
+              "Compare estimated annual value difference between the two work setups.",
             ]
         : tool.slug === "time-card-calculator"
           ? [
@@ -1990,6 +2112,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "covered-call-return-calculator" ? <CoveredCallReturnCalculatorTool /> : null}
       {tool.slug === "cash-secured-put-yield-calculator" ? <CashSecuredPutYieldCalculatorTool /> : null}
       {tool.slug === "ib-buying-power-simulator" ? <IbBuyingPowerSimulatorTool /> : null}
+      {tool.slug === "etf-move-calculator" ? <EtfMoveCalculatorTool /> : null}
       {tool.slug === "time-zone-converter" ? <TimeZoneMeetingPlannerTool /> : null}
       {tool.slug === "id-list-formatter" ? <IdListFormatterTool /> : null}
       {tool.slug === "image-compressor" ? <ImageCompressorTool /> : null}
@@ -2010,6 +2133,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "tip-calculator" ? <TipCalculatorTool /> : null}
       {tool.slug === "loan-payment-calculator" ? <LoanPaymentCalculatorTool /> : null}
       {tool.slug === "paycheck-calculator" ? <PaycheckCalculatorTool /> : null}
+      {tool.slug === "pay-raise-calculator" ? <PayRaiseCalculatorTool /> : null}
+      {tool.slug === "overtime-pay-calculator" ? <OvertimePayCalculatorTool /> : null}
+      {tool.slug === "w2-vs-1099-calculator" ? <W2Vs1099CalculatorTool /> : null}
       {tool.slug === "time-card-calculator" ? <TimeCardCalculatorTool /> : null}
       {tool.slug === "sales-tax-calculator" ? <SalesTaxCalculatorTool /> : null}
       {tool.slug === "discount-tax-calculator" ? <DiscountTaxCalculatorTool /> : null}
@@ -2067,6 +2193,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "covered-call-return-calculator" &&
       tool.slug !== "cash-secured-put-yield-calculator" &&
       tool.slug !== "ib-buying-power-simulator" &&
+      tool.slug !== "etf-move-calculator" &&
       tool.slug !== "time-zone-converter" &&
       tool.slug !== "id-list-formatter" &&
       tool.slug !== "image-compressor" &&
@@ -2087,6 +2214,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "tip-calculator" &&
       tool.slug !== "loan-payment-calculator" &&
       tool.slug !== "paycheck-calculator" &&
+      tool.slug !== "pay-raise-calculator" &&
+      tool.slug !== "overtime-pay-calculator" &&
+      tool.slug !== "w2-vs-1099-calculator" &&
       tool.slug !== "time-card-calculator" &&
       tool.slug !== "sales-tax-calculator" &&
       tool.slug !== "discount-tax-calculator" &&

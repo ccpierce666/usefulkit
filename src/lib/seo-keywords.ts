@@ -123,6 +123,11 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "raise percentage calculator",
     "new salary after raise",
     "raise take home pay calculator",
+    "promotion salary calculator",
+    "salary raise after tax calculator",
+    "how much is a 5 percent raise",
+    "annual to monthly raise calculator",
+    "raise vs inflation calculator",
   ],
   "overtime-pay-calculator": [
     "overtime pay calculator",
@@ -130,6 +135,11 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "double time pay calculator",
     "time and a half calculator",
     "overtime paycheck calculator",
+    "california overtime calculator",
+    "weekly overtime pay calculator",
+    "daily overtime hours calculator",
+    "1.5x overtime calculator",
+    "2x double time calculator",
   ],
   "w2-vs-1099-calculator": [
     "1099 vs w2 calculator",
@@ -137,6 +147,11 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "independent contractor vs employee pay",
     "1099 take home calculator",
     "w2 take home vs 1099",
+    "self employment tax calculator 1099",
+    "freelancer vs employee salary comparison",
+    "contractor taxes vs w2 taxes",
+    "is 1099 better than w2",
+    "1099 qbi deduction calculator",
   ],
   "time-card-calculator": [
     "time sheet calculator",
@@ -344,11 +359,11 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
   "paycheck-calculator":
     "Estimate take-home pay with salary or hourly inputs, paycheck tax assumptions, and instant net pay results.",
   "pay-raise-calculator":
-    "Estimate your new salary after a raise and compare annual, monthly, and take-home pay impact.",
+    "Estimate your new salary after a raise, compare annual and monthly pay changes, and model take-home impact after tax and 401(k) assumptions.",
   "overtime-pay-calculator":
-    "Calculate regular, overtime, and double-time earnings with custom thresholds and pay multipliers.",
+    "Calculate regular, overtime, and double-time earnings with weekly or California-style daily overtime rules and custom pay multipliers.",
   "w2-vs-1099-calculator":
-    "Compare estimated annual value for W-2 versus 1099 work using taxes, contractor expenses, and benefits assumptions.",
+    "Compare estimated annual value for W-2 versus 1099 work using taxes, self-employment costs, QBI assumptions, expenses, and benefits.",
   "time-card-calculator":
     "Track work hours, breaks, overtime, and payroll-ready totals with an easy weekly time card calculator.",
   "old-photo-restoration":
@@ -391,4 +406,10 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Calculate EV home charger payback period, monthly savings, and long-term ROI using home/public charging mix assumptions.",
   "ev-battery-degradation-estimator":
     "Forecast EV battery degradation, expected range decline, and replacement reserve planning based on mileage, fast-charging share, and climate profile.",
+};
+
+export const toolSeoTitleOverrides: Partial<Record<string, string>> = {
+  "pay-raise-calculator": "Pay Raise Calculator (After-Tax Salary Increase)",
+  "overtime-pay-calculator": "Overtime Pay Calculator (Time-and-a-Half + Double Time)",
+  "w2-vs-1099-calculator": "1099 vs W-2 Calculator (Contractor vs Employee Pay)",
 };

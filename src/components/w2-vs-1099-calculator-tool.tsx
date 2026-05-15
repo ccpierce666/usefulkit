@@ -20,6 +20,10 @@ export function W2Vs1099CalculatorTool() {
   const [expenseRate, setExpenseRate] = useState(18);
   const [contractorIncomeTaxRate, setContractorIncomeTaxRate] = useState(24);
   const [selfEmploymentTaxRate, setSelfEmploymentTaxRate] = useState(15.3);
+  const [includeQbi, setIncludeQbi] = useState(true);
+  const [qbiRate, setQbiRate] = useState(20);
+  const [contractorHealthInsurance, setContractorHealthInsurance] = useState(6000);
+  const [contractorRetirementCost, setContractorRetirementCost] = useState(5000);
 
   const calc = useMemo(() => {
     const gross = Math.max(0, annualGross);
@@ -34,12 +38,21 @@ export function W2Vs1099CalculatorTool() {
 
     const seTax = contractorNetBusinessIncome * Math.max(0, selfEmploymentTaxRate) / 100;
     const deductibleHalfSeTax = seTax * 0.5;
-    const taxableAfterHalfSe = Math.max(0, contractorNetBusinessIncome - deductibleHalfSeTax);
+    const qbiDeduction =
+      includeQbi
+        ? Math.max(0, contractorNetBusinessIncome) * (Math.max(0, Math.min(20, qbiRate)) / 100)
+        : 0;
+    const taxableAfterHalfSe = Math.max(
+      0,
+      contractorNetBusinessIncome - deductibleHalfSeTax - qbiDeduction,
+    );
     const contractorIncomeTax =
       taxableAfterHalfSe * Math.max(0, contractorIncomeTaxRate) / 100;
 
+    const contractorPersonalCosts =
+      Math.max(0, contractorHealthInsurance) + Math.max(0, contractorRetirementCost);
     const contractorNetCash =
-      gross - businessExpenses - seTax - contractorIncomeTax;
+      gross - businessExpenses - seTax - contractorIncomeTax - contractorPersonalCosts;
 
     const valueGap = contractorNetCash - w2TotalValue;
 
@@ -52,14 +65,20 @@ export function W2Vs1099CalculatorTool() {
       contractorNetBusinessIncome,
       seTax,
       deductibleHalfSeTax,
+      qbiDeduction,
       contractorIncomeTax,
+      contractorPersonalCosts,
       contractorNetCash,
       valueGap,
     };
   }, [
     annualGross,
     contractorIncomeTaxRate,
+    contractorHealthInsurance,
+    contractorRetirementCost,
     expenseRate,
+    includeQbi,
+    qbiRate,
     selfEmploymentTaxRate,
     w2BenefitsValue,
     w2EmployeeFicaRate,
@@ -171,6 +190,51 @@ export function W2Vs1099CalculatorTool() {
                 />
               </label>
             </div>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              <label className="flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-sm font-semibold text-foreground">
+                <input
+                  type="checkbox"
+                  checked={includeQbi}
+                  onChange={(event) => setIncludeQbi(event.target.checked)}
+                />
+                Apply QBI Deduction
+              </label>
+              <label className="grid gap-1">
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted">QBI Rate %</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={20}
+                  step="0.1"
+                  value={qbiRate}
+                  onChange={(event) => setQbiRate(Number(event.target.value) || 0)}
+                  className="h-9 rounded-lg border border-line bg-white px-2 text-sm outline-none transition focus:border-brand"
+                  disabled={!includeQbi}
+                />
+              </label>
+              <label className="grid gap-1">
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted">Health Insurance / Year</span>
+                <input
+                  type="number"
+                  min={0}
+                  step="1"
+                  value={contractorHealthInsurance}
+                  onChange={(event) => setContractorHealthInsurance(Number(event.target.value) || 0)}
+                  className="h-9 rounded-lg border border-line bg-white px-2 text-sm outline-none transition focus:border-brand"
+                />
+              </label>
+              <label className="grid gap-1">
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted">Retirement Cost / Year</span>
+                <input
+                  type="number"
+                  min={0}
+                  step="1"
+                  value={contractorRetirementCost}
+                  onChange={(event) => setContractorRetirementCost(Number(event.target.value) || 0)}
+                  className="h-9 rounded-lg border border-line bg-white px-2 text-sm outline-none transition focus:border-brand"
+                />
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -192,8 +256,17 @@ export function W2Vs1099CalculatorTool() {
             {money(calc.valueGap)}
           </p>
         </article>
+        <article className="rounded-2xl border border-line bg-surface p-4 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">1099 Breakdown</p>
+          <div className="mt-2 space-y-1 text-sm text-foreground">
+            <p>Business expenses: {money(calc.businessExpenses)}</p>
+            <p>SE tax: {money(calc.seTax)}</p>
+            <p>QBI deduction: {money(calc.qbiDeduction)}</p>
+            <p>Income tax: {money(calc.contractorIncomeTax)}</p>
+            <p>Health + retirement cost: {money(calc.contractorPersonalCosts)}</p>
+          </div>
+        </article>
       </div>
     </section>
   );
 }
-

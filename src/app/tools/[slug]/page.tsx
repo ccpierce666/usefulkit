@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { toolKeywordClusters, toolSeoDescriptionOverrides } from "@/lib/seo-keywords";
+import {
+  toolKeywordClusters,
+  toolSeoDescriptionOverrides,
+  toolSeoTitleOverrides,
+} from "@/lib/seo-keywords";
 import { AgeCalculatorTool } from "@/components/age-calculator-tool";
 import { AddWatermarkPdfTool } from "@/components/add-watermark-pdf-tool";
 import { AprCalculatorTool } from "@/components/apr-calculator-tool";
@@ -92,6 +96,7 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
 
   const categoryName = categoryLabels[tool.category];
   const keywordCluster = toolKeywordClusters[tool.slug] ?? [];
+  const seoTitle = toolSeoTitleOverrides[tool.slug] ?? `${tool.name} - Free Online`;
   const seoDescription =
     toolSeoDescriptionOverrides[tool.slug] ??
     `${tool.summary} Free online ${tool.name.toLowerCase()} with instant results.`;
@@ -106,14 +111,14 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
   ];
 
   return {
-    title: `${tool.name} - Free Online`,
+    title: seoTitle,
     description: seoDescription,
     keywords,
     alternates: {
       canonical: `https://usefulkit.io/tools/${tool.slug}`,
     },
     openGraph: {
-      title: `${tool.name} | UsefulKit`,
+      title: `${seoTitle} | UsefulKit`,
       description: seoDescription,
       url: `https://usefulkit.io/tools/${tool.slug}`,
       siteName: "UsefulKit",
@@ -122,7 +127,7 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
     },
     twitter: {
       card: "summary_large_image",
-      title: `${tool.name} | UsefulKit`,
+      title: `${seoTitle} | UsefulKit`,
       description: seoDescription,
     },
   };

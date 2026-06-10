@@ -207,7 +207,8 @@ export const tools: ToolItem[] = [
   {
     slug: "character-counter",
     name: "Character Counter",
-    summary: "Fast character count for posts, ads, and forms.",
+    summary:
+      "Count characters, characters without spaces, words, lines, and sentences for posts, SEO titles, and form fields.",
     category: "text-tools",
     keyword: "character counter",
   },
@@ -347,7 +348,8 @@ export const tools: ToolItem[] = [
   {
     slug: "overtime-pay-calculator",
     name: "Overtime Pay Calculator",
-    summary: "Calculate regular, overtime, and double-time pay based on hourly rate and worked hours.",
+    summary:
+      "Calculate regular, overtime, and double-time pay with weekly or California-style daily overtime rules.",
     category: "converters",
     keyword: "overtime pay calculator",
   },
@@ -403,7 +405,8 @@ export const tools: ToolItem[] = [
   {
     slug: "ev-charging-cost-calculator",
     name: "EV Charging Cost Calculator",
-    summary: "Estimate EV charging costs by U.S. state with home/public mix and gas comparison.",
+    summary:
+      "Estimate EV charging cost by U.S. state, compare home vs public charging, and benchmark annual EV savings against gas.",
     category: "converters",
     keyword: "ev charging cost calculator",
   },

@@ -163,7 +163,7 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
     "pay-raise-calculator":
       "The calculator models raise impact from either percentage or fixed-dollar increase, then compares annual and monthly changes in gross and estimated net pay using your effective tax assumption.",
     "overtime-pay-calculator":
-      "Worked time is split into regular, overtime, and optional double-time buckets. Each bucket uses its own multiplier to calculate a complete pay breakdown and blended hourly value.",
+      "The tool supports both weekly overtime logic and a simplified California-style daily rule. Worked time is allocated into regular, overtime, and double-time buckets before each bucket is multiplied by its configured pay rate.",
     "w2-vs-1099-calculator":
       "The comparison estimates W-2 total value and 1099 net cash using business expenses, self-employment tax, income tax, and benefits assumptions so you can evaluate both arrangements consistently.",
     "time-card-calculator":
@@ -191,7 +191,7 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
     "word-counter":
       "The editor tokenizes text into words, characters, lines, and sentence boundaries in real time, then estimates reading time from word count.",
     "character-counter":
-      "The tool tracks visible characters, whitespace, and line breaks to support platform-specific text limits and validation.",
+      "The tool counts total characters, characters without spaces, words, lines, and sentence boundaries in real time so you can validate text length for social posts, SEO snippets, form inputs, and ad copy.",
     "case-converter":
       "Text is transformed using deterministic casing rules for lower, upper, title, and sentence modes while preserving source punctuation.",
     "remove-line-breaks":
@@ -219,7 +219,7 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
     "time-zone-converter":
       "The planner translates local work windows across time zones, then computes overlap intervals that satisfy meeting duration constraints.",
     "ev-charging-cost-calculator":
-      "The estimator combines state electricity assumptions, vehicle efficiency, and charging mix to project monthly and annual EV fueling cost.",
+      "The estimator combines state-level home electricity pricing, EV efficiency, monthly mileage, charging mix, and optional off-peak discounts to project monthly and annual EV charging cost versus a gas vehicle baseline.",
     "ev-trip-charging-cost-planner":
       "Trip model converts route distance into kWh demand, estimates charging stops from usable battery window, and compares EV versus gas cost.",
     "ev-charge-time-estimator":
@@ -660,14 +660,19 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
     ],
     "overtime-pay-calculator": [
       {
-        question: "Does this use federal or state overtime law rules automatically?",
+        question: "Does this overtime calculator support both weekly and California daily rules?",
         answer:
-          "No. This tool follows your configured thresholds and multipliers. For compliance decisions, always check your state labor rules and employer policy.",
+          "Yes. You can switch between a federal-style weekly overtime view and a simplified California-style daily overtime mode. For payroll compliance, still confirm your employer policy and local labor rules.",
       },
       {
-        question: "How should I handle double-time hours?",
+        question: "How should I handle double-time hours in weekly mode?",
         answer:
           "Enter only the portion of hours that should be paid at double-time. The remaining non-regular hours are treated as overtime at your overtime multiplier.",
+      },
+      {
+        question: "Why might my employer's overtime total differ from this result?",
+        answer:
+          "Employers may apply unpaid breaks, shift premiums, rounding rules, or state-specific labor requirements that are outside this estimator. Use this page for planning and checking, not as a final payroll record.",
       },
     ],
     "w2-vs-1099-calculator": [
@@ -680,6 +685,18 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
         question: "Why include W-2 benefits value in the comparison?",
         answer:
           "W-2 offers often include benefits like health insurance and employer retirement match. Adding a yearly value makes the W-2 vs 1099 comparison more realistic.",
+      },
+    ],
+    "character-counter": [
+      {
+        question: "Does this character counter include spaces and line breaks?",
+        answer:
+          "Yes. The total character count includes spaces and line breaks. The separate 'Characters (No Spaces)' metric helps when you need a whitespace-free count.",
+      },
+      {
+        question: "Can I use this for SEO titles and social media captions?",
+        answer:
+          "Yes. It works well for page titles, meta descriptions, ad headlines, social captions, and form-field limits where text length matters before publishing.",
       },
     ],
     "md5-tool": [
@@ -947,6 +964,16 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
         answer:
           "Yes. State selection changes default electricity assumptions, which directly affects estimated charging cost.",
       },
+      {
+        question: "Does this EV charging calculator compare home and public charging?",
+        answer:
+          "Yes. You can set a home charging share, choose a public charging preset or custom public rate, and compare the blended EV charging result against a gasoline vehicle baseline.",
+      },
+      {
+        question: "Are these state electricity rates live utility quotes?",
+        answer:
+          "Not by default. The calculator starts with built-in state averages and can optionally refresh from EIA monthly retail data. Your own utility tariff, TOU plan, and charging losses may still produce a different real-world bill.",
+      },
     ],
     "ev-charge-time-estimator": [
       {
@@ -1042,9 +1069,9 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Outputs: new salary, gross pay difference, and estimated take-home difference.",
     ],
     "overtime-pay-calculator": [
-      "Calculate weekly pay using regular, overtime, and optional double-time hours.",
-      "Inputs: hourly rate, total worked hours, regular threshold, and pay multipliers.",
-      "Outputs: pay breakdown by hour bucket and total gross pay estimate.",
+      "Calculate time-and-a-half and double-time pay using either weekly overtime rules or a simplified California daily overtime mode.",
+      "Inputs: hourly rate, worked hours or daily hours, overtime thresholds, and pay multipliers.",
+      "Outputs: regular/overtime/double-time hour split, pay breakdown by bucket, total gross pay, and blended hourly rate.",
     ],
     "w2-vs-1099-calculator": [
       "Compare estimated value between W-2 employment and 1099 contractor income.",
@@ -1107,9 +1134,9 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Outputs: real-time count metrics for writing, publishing, and SEO workflows.",
     ],
     "character-counter": [
-      "Track character limits for posts, ads, titles, and form fields.",
-      "Inputs: any text content.",
-      "Outputs: total characters, optional whitespace awareness, and quick limit checking.",
+      "Track text length for social captions, SEO titles, meta descriptions, ads, and form fields.",
+      "Inputs: any pasted or typed text content.",
+      "Outputs: total characters, characters without spaces, words, lines, sentences, and fast limit checking.",
     ],
     "case-converter": [
       "Convert text casing for documents, code snippets, and content formatting.",
@@ -1167,9 +1194,9 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Outputs: overlap slots suitable for scheduling distributed teams.",
     ],
     "ev-charging-cost-calculator": [
-      "Estimate EV charging spend with state electricity assumptions and charging mix.",
-      "Inputs: vehicle efficiency, mileage, home/public charging ratio.",
-      "Outputs: monthly and annual EV cost plus gas comparison.",
+      "Estimate EV charging cost by state using home electricity pricing, public charging mix, and off-peak assumptions.",
+      "Inputs: vehicle efficiency, monthly mileage, state, home/public charging ratio, public rate, and gas benchmark inputs.",
+      "Outputs: monthly and annual EV charging cost, cost per mile, monthly energy use, and annual savings versus gas.",
     ],
     "ev-trip-charging-cost-planner": [
       "Plan charging stops, charging time, and trip energy cost for long EV routes.",

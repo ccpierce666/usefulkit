@@ -110,6 +110,18 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "text watermark pdf",
     "stamp pdf with watermark",
   ],
+  "character-counter": [
+    "character counter",
+    "character count",
+    "character counter online",
+    "character count checker",
+    "characters without spaces",
+    "text length checker",
+    "title character counter",
+    "meta title character counter",
+    "social media character counter",
+    "tweet character counter",
+  ],
   "paycheck-calculator": [
     "take home pay calculator",
     "take home income calculator",
@@ -140,6 +152,10 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "daily overtime hours calculator",
     "1.5x overtime calculator",
     "2x double time calculator",
+    "8 hour overtime calculator",
+    "12 hour double time calculator",
+    "after 40 hours overtime calculator",
+    "work overtime pay calculator",
   ],
   "w2-vs-1099-calculator": [
     "1099 vs w2 calculator",
@@ -314,6 +330,18 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "short put breakeven calculator",
     "cash secured put assignment calculator",
   ],
+  "ev-charging-cost-calculator": [
+    "ev charging cost calculator",
+    "cost to charge electric car",
+    "electric car charging cost calculator",
+    "ev charging cost by state",
+    "tesla charging cost calculator",
+    "home vs public charging cost",
+    "electric car cost per mile",
+    "cost to charge ev at home",
+    "public charging cost calculator",
+    "ev vs gas cost calculator",
+  ],
   "ev-charge-time-estimator": [
     "ev charging time calculator",
     "how long to charge an ev",
@@ -356,12 +384,14 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Convert PDF to text online, extract readable text, and copy or download the result in your browser.",
   "add-watermark-pdf":
     "Add watermark to PDF online, stamp every page with text, and download the marked file in your browser.",
+  "character-counter":
+    "Count characters, characters without spaces, words, lines, and sentences online for social posts, SEO titles, ad copy, and form fields.",
   "paycheck-calculator":
     "Estimate take-home pay with salary or hourly inputs, paycheck tax assumptions, and instant net pay results.",
   "pay-raise-calculator":
     "Estimate your new salary after a raise, compare annual and monthly pay changes, and model take-home impact after tax and 401(k) assumptions.",
   "overtime-pay-calculator":
-    "Calculate regular, overtime, and double-time earnings with weekly or California-style daily overtime rules and custom pay multipliers.",
+    "Calculate time-and-a-half and double-time earnings with weekly or California-style daily overtime rules, custom thresholds, and pay multipliers.",
   "w2-vs-1099-calculator":
     "Compare estimated annual value for W-2 versus 1099 work using taxes, self-employment costs, QBI assumptions, expenses, and benefits.",
   "time-card-calculator":
@@ -400,6 +430,8 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Calculate covered call premium income, breakeven, called-away return, and annualized yield with expiration scenario analysis.",
   "cash-secured-put-yield-calculator":
     "Estimate cash-secured put income, collateral return, breakeven price, assignment basis, and annualized yield for option income strategies.",
+  "ev-charging-cost-calculator":
+    "Estimate EV charging cost by state, compare home vs public charging, apply off-peak discounts, and benchmark annual EV cost against gas.",
   "ev-charge-time-estimator":
     "Estimate EV charging time from current battery percentage to target level with charger power, charging loss, and electricity cost inputs.",
   "ev-home-charger-payback-calculator":
@@ -409,7 +441,9 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
 };
 
 export const toolSeoTitleOverrides: Partial<Record<string, string>> = {
+  "character-counter": "Character Counter (Characters, Words, Lines, No Spaces)",
   "pay-raise-calculator": "Pay Raise Calculator (After-Tax Salary Increase)",
-  "overtime-pay-calculator": "Overtime Pay Calculator (Time-and-a-Half + Double Time)",
+  "overtime-pay-calculator": "Overtime Pay Calculator (Weekly + California Daily OT)",
   "w2-vs-1099-calculator": "1099 vs W-2 Calculator (Contractor vs Employee Pay)",
+  "ev-charging-cost-calculator": "EV Charging Cost Calculator by State",
 };

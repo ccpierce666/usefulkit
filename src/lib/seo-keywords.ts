@@ -129,6 +129,31 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "salary paycheck calculator",
     "hourly paycheck calculator",
   ],
+  "w4-withholding-checkup-calculator": [
+    "w4 withholding calculator",
+    "w4 checkup calculator",
+    "tax withholding calculator",
+    "federal withholding estimator",
+    "how much should i withhold",
+    "w4 extra withholding calculator",
+    "paycheck withholding checkup",
+  ],
+  "hsa-contribution-tax-savings-calculator": [
+    "hsa contribution calculator",
+    "hsa tax savings calculator",
+    "hsa limit calculator",
+    "hsa max contribution calculator",
+    "hsa payroll tax savings",
+    "hsa family limit calculator",
+  ],
+  "mileage-deduction-calculator": [
+    "mileage deduction calculator",
+    "business mileage calculator",
+    "mileage reimbursement calculator",
+    "irs mileage calculator",
+    "standard mileage deduction calculator",
+    "mileage tax deduction calculator",
+  ],
   "pay-raise-calculator": [
     "pay raise calculator",
     "salary increase calculator",
@@ -330,6 +355,14 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "short put breakeven calculator",
     "cash secured put assignment calculator",
   ],
+  "home-electricity-bill-estimator": [
+    "electric bill estimator",
+    "home electricity bill calculator",
+    "power bill calculator",
+    "monthly electric bill estimate",
+    "electricity cost calculator by state",
+    "kwh bill estimator",
+  ],
   "ev-charging-cost-calculator": [
     "ev charging cost calculator",
     "cost to charge electric car",
@@ -388,6 +421,12 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Count characters, characters without spaces, words, lines, and sentences online for social posts, SEO titles, ad copy, and form fields.",
   "paycheck-calculator":
     "Estimate take-home pay with salary or hourly inputs, paycheck tax assumptions, and instant net pay results.",
+  "w4-withholding-checkup-calculator":
+    "Estimate whether your federal withholding is on track, project refund or shortfall, and calculate extra withholding per paycheck for W-4 planning.",
+  "hsa-contribution-tax-savings-calculator":
+    "Estimate HSA contribution room, catch-up eligibility, payroll tax savings, and remaining annual limit with a fast HSA calculator.",
+  "mileage-deduction-calculator":
+    "Estimate business, medical, and charity mileage value with editable standard-mileage rates, parking, tolls, and tax-impact planning.",
   "pay-raise-calculator":
     "Estimate your new salary after a raise, compare annual and monthly pay changes, and model take-home impact after tax and 401(k) assumptions.",
   "overtime-pay-calculator":
@@ -430,6 +469,8 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Calculate covered call premium income, breakeven, called-away return, and annualized yield with expiration scenario analysis.",
   "cash-secured-put-yield-calculator":
     "Estimate cash-secured put income, collateral return, breakeven price, assignment basis, and annualized yield for option income strategies.",
+  "home-electricity-bill-estimator":
+    "Estimate a home electric bill from state-average rates, monthly kWh usage, fixed fees, and off-peak discounts with a quick electricity bill calculator.",
   "ev-charging-cost-calculator":
     "Estimate EV charging cost by state, compare home vs public charging, apply off-peak discounts, and benchmark annual EV cost against gas.",
   "ev-charge-time-estimator":
@@ -442,8 +483,12 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
 
 export const toolSeoTitleOverrides: Partial<Record<string, string>> = {
   "character-counter": "Character Counter (Characters, Words, Lines, No Spaces)",
+  "w4-withholding-checkup-calculator": "W-4 Withholding Checkup Calculator",
+  "hsa-contribution-tax-savings-calculator": "HSA Contribution & Tax Savings Calculator",
+  "mileage-deduction-calculator": "Mileage Deduction Calculator",
   "pay-raise-calculator": "Pay Raise Calculator (After-Tax Salary Increase)",
   "overtime-pay-calculator": "Overtime Pay Calculator (Weekly + California Daily OT)",
   "w2-vs-1099-calculator": "1099 vs W-2 Calculator (Contractor vs Employee Pay)",
+  "home-electricity-bill-estimator": "Home Electricity Bill Estimator",
   "ev-charging-cost-calculator": "EV Charging Cost Calculator by State",
 };

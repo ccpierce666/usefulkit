@@ -30,6 +30,8 @@ import { EvBatteryDegradationEstimatorTool } from "@/components/ev-battery-degra
 import { GifCompressorTool } from "@/components/gif-compressor-tool";
 import { GifToMp4Tool } from "@/components/gif-to-mp4-tool";
 import { HairstyleTryOnTool } from "@/components/hairstyle-try-on-tool";
+import { HomeElectricityBillEstimatorTool } from "@/components/home-electricity-bill-estimator-tool";
+import { HsaContributionTaxSavingsCalculatorTool } from "@/components/hsa-contribution-tax-savings-calculator-tool";
 import { HeicToJpgTool } from "@/components/heic-to-jpg-tool";
 import { IbBuyingPowerSimulatorTool } from "@/components/ib-buying-power-simulator-tool";
 import { EtfMoveCalculatorTool } from "@/components/etf-move-calculator-tool";
@@ -44,6 +46,7 @@ import { LoanPaymentCalculatorTool } from "@/components/loan-payment-calculator-
 import { Md5Tool } from "@/components/md5-tool";
 import { MarkupMarginCalculatorTool } from "@/components/markup-margin-calculator-tool";
 import { MergePdfTool } from "@/components/merge-pdf-tool";
+import { MileageDeductionCalculatorTool } from "@/components/mileage-deduction-calculator-tool";
 import { Mp4ToGifTool } from "@/components/mp4-to-gif-tool";
 import { OldPhotoRestorationTool } from "@/components/old-photo-restoration-tool";
 import { OptionsBreakevenPlCalculatorTool } from "@/components/options-breakeven-pl-calculator-tool";
@@ -74,6 +77,7 @@ import { TimeZoneMeetingPlannerTool } from "@/components/time-zone-meeting-plann
 import { TipCalculatorTool } from "@/components/tip-calculator-tool";
 import { UnitConverterTool } from "@/components/unit-converter-tool";
 import { WaterIntakeCalculatorTool } from "@/components/water-intake-calculator-tool";
+import { W4WithholdingCheckupCalculatorTool } from "@/components/w4-withholding-checkup-calculator-tool";
 import { WebpToJpgTool } from "@/components/webp-to-jpg-tool";
 import { W2Vs1099CalculatorTool } from "@/components/w2-vs-1099-calculator-tool";
 import { WordCounterTool } from "@/components/word-counter-tool";
@@ -160,6 +164,12 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
   const slugLogic: Partial<Record<ToolItem["slug"], string>> = {
     "paycheck-calculator":
       "The calculator derives paycheck gross income from salary/hourly mode and pay frequency, then applies pre-tax deductions and tax assumptions (federal/state/local/FICA) to estimate take-home pay.",
+    "w4-withholding-checkup-calculator":
+      "The checkup compares projected annual federal withholding against an estimated tax target built from wages, other income, credits, and an effective tax rate, then spreads any shortfall across remaining paychecks.",
+    "hsa-contribution-tax-savings-calculator":
+      "The calculator estimates annual HSA room from coverage type, months of eligibility, and optional age-55 catch-up, then models tax savings from employee contributions with payroll-vs-direct treatment.",
+    "mileage-deduction-calculator":
+      "Mileage value is derived from business, medical, and charity miles multiplied by editable standard-mileage rates, with parking and tolls added on top of business mileage totals.",
     "pay-raise-calculator":
       "The calculator models raise impact from either percentage or fixed-dollar increase, then compares annual and monthly changes in gross and estimated net pay using your effective tax assumption.",
     "overtime-pay-calculator":
@@ -250,6 +260,8 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The optimizer models plan alternatives such as ad tiers, annual billing, and bundle scenarios to estimate potential monthly savings.",
     "quarterly-tax-safe-pay-planner":
       "Planner estimates safe quarterly payment targets from projected income, effective tax assumptions, and withholding offsets across due dates.",
+    "home-electricity-bill-estimator":
+      "The estimator combines state-average residential electricity pricing, monthly kWh usage, fixed service charges, and off-peak discount assumptions to project a realistic monthly power bill.",
     "compress-pdf":
       "The tool rewrites PDF object streams with optimized save settings to reduce file size for uploads, sharing, and browser-based document workflows.",
     "split-pdf":
@@ -675,6 +687,42 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Employers may apply unpaid breaks, shift premiums, rounding rules, or state-specific labor requirements that are outside this estimator. Use this page for planning and checking, not as a final payroll record.",
       },
     ],
+    "w4-withholding-checkup-calculator": [
+      {
+        question: "Does this W-4 calculator replace the official IRS withholding estimator?",
+        answer:
+          "No. This tool is a planning-grade checkup that helps you spot likely over-withholding or under-withholding. For filing-sensitive adjustments, compare with the official IRS workflow and your paystub details.",
+      },
+      {
+        question: "What does the suggested Step 4(c) amount mean?",
+        answer:
+          "It estimates extra federal withholding per remaining paycheck if you appear to be behind for the year. If your result shows a likely refund, that extra amount will be zero.",
+      },
+    ],
+    "hsa-contribution-tax-savings-calculator": [
+      {
+        question: "Do employer contributions count toward the HSA annual limit?",
+        answer:
+          "Yes. Employer contributions and your own contributions both count toward the annual HSA limit, which is why the calculator includes them together when checking remaining room.",
+      },
+      {
+        question: "Why is payroll contribution tax savings higher?",
+        answer:
+          "HSA contributions made through payroll can reduce both income tax and payroll tax in many situations. Direct post-payroll contributions may still reduce federal income tax but often do not reduce FICA the same way.",
+      },
+    ],
+    "mileage-deduction-calculator": [
+      {
+        question: "Should I include commuting miles in this mileage calculator?",
+        answer:
+          "Usually no. Regular commuting between home and your normal workplace is generally not treated the same as business travel, so keep commute miles separate from deductible or reimbursable mileage.",
+      },
+      {
+        question: "Why are parking and tolls shown separately?",
+        answer:
+          "Parking and tolls are often tracked in addition to mileage value, especially for business travel, so the tool keeps them separate and adds them on top of the business mileage amount.",
+      },
+    ],
     "w2-vs-1099-calculator": [
       {
         question: "Is this an exact tax filing calculator?",
@@ -975,6 +1023,18 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Not by default. The calculator starts with built-in state averages and can optionally refresh from EIA monthly retail data. Your own utility tariff, TOU plan, and charging losses may still produce a different real-world bill.",
       },
     ],
+    "home-electricity-bill-estimator": [
+      {
+        question: "Is this home electricity bill estimator using my exact utility tariff?",
+        answer:
+          "No. It starts from state-average electricity rates and your own usage assumptions. Real utility bills can differ because of tiered pricing, local riders, taxes, demand charges, and seasonal plans.",
+      },
+      {
+        question: "What does off-peak share change in the result?",
+        answer:
+          "Off-peak share applies your selected discount to part of your monthly kWh usage. If you charge devices, run laundry, or cool your home mostly at night, the effective blended rate can drop.",
+      },
+    ],
     "ev-charge-time-estimator": [
       {
         question: "Why is real charging time sometimes longer than estimated?",
@@ -1062,6 +1122,21 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Estimate per-paycheck take-home pay from salary or hourly input and pay frequency.",
       "Inputs: gross income, pay schedule, pre-tax deductions, and tax-rate assumptions.",
       "Outputs: gross pay, tax breakdown, and net pay per paycheck plus annual estimates.",
+    ],
+    "w4-withholding-checkup-calculator": [
+      "Estimate whether your federal withholding is on track for the year.",
+      "Inputs: annual wages, credits, effective tax rate, withholding per paycheck, and paychecks remaining.",
+      "Outputs: projected withholding, likely refund or shortfall, and suggested extra withholding per paycheck.",
+    ],
+    "hsa-contribution-tax-savings-calculator": [
+      "Estimate HSA contribution room and the tax value of contributing through payroll or directly.",
+      "Inputs: tax year, coverage type, months eligible, employer contribution, your contribution, and tax rates.",
+      "Outputs: allowed limit, remaining room, excess risk, estimated tax savings, and net out-of-pocket cost.",
+    ],
+    "mileage-deduction-calculator": [
+      "Estimate mileage value for business, medical, and charity travel with editable standard rates.",
+      "Inputs: miles by category, parking and tolls, mileage rates, and marginal tax rate.",
+      "Outputs: category totals, business mileage plus extras, combined value, and simple tax-impact estimate.",
     ],
     "pay-raise-calculator": [
       "Estimate how a raise changes annual and monthly pay.",
@@ -1283,6 +1358,11 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Inputs: annual income estimate, deductions, withholding, tax rate.",
       "Outputs: suggested quarterly amounts and due-date planning targets.",
     ],
+    "home-electricity-bill-estimator": [
+      "Estimate a monthly home power bill from state-average electricity rates and your usage pattern.",
+      "Inputs: state, monthly kWh, fixed charges, other fees, and off-peak usage assumptions.",
+      "Outputs: effective rate, monthly bill, annual bill, energy-only charge, and state-vs-national comparison.",
+    ],
     "compress-pdf": [
       "Reduce PDF file size before sending, uploading, or archiving documents.",
       "Inputs: a PDF file and selected compression level.",
@@ -1400,6 +1480,21 @@ function buildMethodology(tool: ToolItem): string[] {
       "Gross pay is derived from salary/hourly inputs and selected pay frequency.",
       "Tax amounts are estimated from user-entered federal, state, local, and FICA assumptions.",
       "Net pay = gross pay - pre-tax deductions - estimated taxes.",
+    ],
+    "w4-withholding-checkup-calculator": [
+      "Estimated annual tax target is built from wages, other income, pre-tax deductions, tax credits, and your chosen effective federal rate.",
+      "Projected annual withholding equals year-to-date federal withholding plus current withholding per paycheck times remaining paychecks.",
+      "Suggested W-4 Step 4(c) value spreads any modeled shortfall across the remaining pay periods in the year.",
+    ],
+    "hsa-contribution-tax-savings-calculator": [
+      "Allowed HSA room is estimated from annual limit, months of eligibility, and optional age-55 catch-up contribution.",
+      "Employer and employee contributions are combined to detect remaining room or excess-contribution risk.",
+      "Estimated tax savings apply your federal/state rates and optional payroll-tax benefit when the contribution is made through payroll.",
+    ],
+    "mileage-deduction-calculator": [
+      "Each mileage category is multiplied by its corresponding editable standard-mileage rate to estimate category value.",
+      "Parking and tolls are added to the business mileage total rather than blended into the mileage rate itself.",
+      "Estimated business tax impact is a planning-only calculation equal to business mileage value times your marginal tax rate.",
     ],
     "pay-raise-calculator": [
       "Raise amount is calculated from either percentage increase or fixed-dollar increase over current base salary.",
@@ -1565,6 +1660,11 @@ function buildMethodology(tool: ToolItem): string[] {
       "Annual degradation starts from a base rate and is adjusted by usage stress factors such as DC fast-charge share and climate profile.",
       "Projected battery health uses compounded decay across ownership years to estimate remaining capacity.",
       "Estimated range and replacement reserve are derived from projected remaining capacity and user-entered replacement cost assumptions.",
+    ],
+    "home-electricity-bill-estimator": [
+      "Monthly usage charge equals kWh consumption multiplied by a blended rate based on the selected state average or custom override.",
+      "Off-peak discount reduces only the selected share of usage, producing a lower effective blended cost per kWh.",
+      "Monthly bill equals usage charge plus fixed service fee and other monthly fees, then annual estimate scales that total by twelve.",
     ],
   };
 
@@ -1900,6 +2000,24 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Enter pre-tax deduction and tax rate assumptions.",
               "Review estimated gross, tax breakdown, and take-home pay per paycheck.",
             ]
+        : tool.slug === "w4-withholding-checkup-calculator"
+          ? [
+              "Enter annual wages, other income, credits, and your current federal withholding pattern.",
+              "Set the effective federal tax rate you want to use for planning and the number of paychecks left this year.",
+              "Review projected withholding, likely refund or shortfall, and suggested extra withholding per paycheck.",
+            ]
+        : tool.slug === "hsa-contribution-tax-savings-calculator"
+          ? [
+              "Choose tax year, coverage type, and months you expect to be HSA-eligible.",
+              "Enter employer contribution, your planned contribution, and whether your contribution goes through payroll.",
+              "Review allowed room, estimated tax savings, and any excess-contribution risk.",
+            ]
+        : tool.slug === "mileage-deduction-calculator"
+          ? [
+              "Pick a mileage-rate preset or enter your own custom rates.",
+              "Enter business, medical, and charity miles along with parking and tolls.",
+              "Review category totals, business mileage value, and simple tax-impact estimate.",
+            ]
         : tool.slug === "pay-raise-calculator"
           ? [
               "Enter your current salary and choose raise mode (percent or amount).",
@@ -1959,6 +2077,12 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Enter expected annual income, deductions, and tax withheld.",
               "Set your effective federal tax rate and self-employment toggle.",
               "Get suggested quarterly payments with due-date schedule.",
+            ]
+        : tool.slug === "home-electricity-bill-estimator"
+          ? [
+              "Choose your state or enter a custom electricity rate override.",
+              "Enter monthly kWh usage, fixed charges, other fees, and off-peak assumptions.",
+              "Review effective rate, estimated monthly bill, annual total, and state-vs-national comparison.",
             ]
         : tool.slug === "ev-charging-cost-calculator"
           ? [
@@ -2165,6 +2289,13 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "tip-calculator" ? <TipCalculatorTool /> : null}
       {tool.slug === "loan-payment-calculator" ? <LoanPaymentCalculatorTool /> : null}
       {tool.slug === "paycheck-calculator" ? <PaycheckCalculatorTool /> : null}
+      {tool.slug === "w4-withholding-checkup-calculator" ? (
+        <W4WithholdingCheckupCalculatorTool />
+      ) : null}
+      {tool.slug === "hsa-contribution-tax-savings-calculator" ? (
+        <HsaContributionTaxSavingsCalculatorTool />
+      ) : null}
+      {tool.slug === "mileage-deduction-calculator" ? <MileageDeductionCalculatorTool /> : null}
       {tool.slug === "pay-raise-calculator" ? <PayRaiseCalculatorTool /> : null}
       {tool.slug === "overtime-pay-calculator" ? <OvertimePayCalculatorTool /> : null}
       {tool.slug === "w2-vs-1099-calculator" ? <W2Vs1099CalculatorTool /> : null}
@@ -2176,6 +2307,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "subscription-waste-finder" ? <SubscriptionWasteFinderTool /> : null}
       {tool.slug === "subscription-downgrade-optimizer" ? <SubscriptionDowngradeOptimizerTool /> : null}
       {tool.slug === "quarterly-tax-safe-pay-planner" ? <QuarterlyTaxSafePayPlannerTool /> : null}
+      {tool.slug === "home-electricity-bill-estimator" ? (
+        <HomeElectricityBillEstimatorTool />
+      ) : null}
       {tool.slug === "ev-charging-cost-calculator" ? <EvChargingCostCalculatorTool /> : null}
       {tool.slug === "ev-trip-charging-cost-planner" ? (
         <Suspense
@@ -2246,6 +2380,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "tip-calculator" &&
       tool.slug !== "loan-payment-calculator" &&
       tool.slug !== "paycheck-calculator" &&
+      tool.slug !== "w4-withholding-checkup-calculator" &&
+      tool.slug !== "hsa-contribution-tax-savings-calculator" &&
+      tool.slug !== "mileage-deduction-calculator" &&
       tool.slug !== "pay-raise-calculator" &&
       tool.slug !== "overtime-pay-calculator" &&
       tool.slug !== "w2-vs-1099-calculator" &&
@@ -2257,6 +2394,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "subscription-waste-finder" &&
       tool.slug !== "subscription-downgrade-optimizer" &&
       tool.slug !== "quarterly-tax-safe-pay-planner" &&
+      tool.slug !== "home-electricity-bill-estimator" &&
       tool.slug !== "ev-charging-cost-calculator" &&
       tool.slug !== "ev-trip-charging-cost-planner" &&
       tool.slug !== "ev-charge-time-estimator" &&

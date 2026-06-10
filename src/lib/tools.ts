@@ -403,6 +403,38 @@ export const tools: ToolItem[] = [
     keyword: "quarterly tax planner",
   },
   {
+    slug: "w4-withholding-checkup-calculator",
+    name: "W-4 Withholding Checkup Calculator",
+    summary:
+      "Estimate whether your federal withholding is on track and how much extra withholding may be needed per paycheck.",
+    category: "converters",
+    keyword: "w4 withholding calculator",
+  },
+  {
+    slug: "hsa-contribution-tax-savings-calculator",
+    name: "HSA Contribution & Tax Savings Calculator",
+    summary:
+      "Estimate HSA contribution room, catch-up eligibility, and tax savings from payroll or direct contributions.",
+    category: "converters",
+    keyword: "hsa contribution calculator",
+  },
+  {
+    slug: "mileage-deduction-calculator",
+    name: "Mileage Deduction Calculator",
+    summary:
+      "Estimate business, medical, and charity mileage value with editable standard-mileage rates and parking/toll adjustments.",
+    category: "converters",
+    keyword: "mileage deduction calculator",
+  },
+  {
+    slug: "home-electricity-bill-estimator",
+    name: "Home Electricity Bill Estimator",
+    summary:
+      "Estimate a monthly home power bill from state-average electricity rates, kWh usage, fixed fees, and off-peak assumptions.",
+    category: "converters",
+    keyword: "electric bill estimator",
+  },
+  {
     slug: "ev-charging-cost-calculator",
     name: "EV Charging Cost Calculator",
     summary:

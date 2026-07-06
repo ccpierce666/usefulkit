@@ -269,6 +269,27 @@ export const tools: ToolItem[] = [
     keyword: "roblox player lookup",
   },
   {
+    slug: "roblox-username-to-id",
+    name: "Roblox Username to ID",
+    summary: "Convert a Roblox username into a numeric user ID with public profile context.",
+    category: "text-tools",
+    keyword: "roblox username to id",
+  },
+  {
+    slug: "roblox-user-id-lookup",
+    name: "Roblox User ID Lookup",
+    summary: "Look up a Roblox player from a numeric user ID and review public profile details.",
+    category: "text-tools",
+    keyword: "roblox user id lookup",
+  },
+  {
+    slug: "roblox-avatar-lookup",
+    name: "Roblox Avatar Lookup",
+    summary: "Find a Roblox player's public avatar headshot and profile details by username or ID.",
+    category: "text-tools",
+    keyword: "roblox avatar lookup",
+  },
+  {
     slug: "age-calculator",
     name: "Age Calculator",
     summary: "Calculate exact age from a date of birth.",

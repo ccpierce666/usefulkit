@@ -147,6 +147,17 @@ type GuideSection = {
   content: string;
 };
 
+const robloxToolSlugs = [
+  "roblox-player-lookup",
+  "roblox-username-to-id",
+  "roblox-user-id-lookup",
+  "roblox-avatar-lookup",
+];
+
+function isRobloxTool(slug: string): boolean {
+  return robloxToolSlugs.includes(slug);
+}
+
 const categoryTips: Record<ToolItem["category"], string> = {
   "file-tools":
     "For file tools, start with a small sample file first, confirm output quality, then process larger files. This helps avoid repeated work and makes your workflow more predictable.",
@@ -190,6 +201,12 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The tool normalizes your company query and prepares source-specific search URLs, so you can validate legal, commercial, and reputation signals in parallel.",
     "roblox-player-lookup":
       "The tool resolves Roblox username or user ID through public endpoints, then aggregates profile, avatar, and social count data into one view.",
+    "roblox-username-to-id":
+      "The tool resolves a Roblox username through the public usernames endpoint, then returns the numeric user ID with profile and avatar context.",
+    "roblox-user-id-lookup":
+      "The tool uses a numeric Roblox user ID to fetch public profile fields, avatar headshot, and social count data from Roblox endpoints.",
+    "roblox-avatar-lookup":
+      "The tool resolves a Roblox username or user ID, then fetches the public avatar headshot alongside profile details for confirmation.",
     "ib-buying-power-simulator":
       "The simulator estimates initial and maintenance margin usage from A/B/C stock position values, then projects remaining buying power from your net liquidation value and assumed initial margin rate.",
     "options-breakeven-pl-calculator":
@@ -790,6 +807,42 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "It can return public profile fields such as display name, username, avatar, account creation date, and social counts when available from Roblox public endpoints.",
       },
     ],
+    "roblox-username-to-id": [
+      {
+        question: "How do I find a Roblox user ID from a username?",
+        answer:
+          "Enter the Roblox username, run the lookup, and the result panel will show the numeric user ID with public profile details for confirmation.",
+      },
+      {
+        question: "Does display name work the same as username?",
+        answer:
+          "No. Roblox display names are not unique. For reliable conversion, use the account username rather than only the display name.",
+      },
+    ],
+    "roblox-user-id-lookup": [
+      {
+        question: "Can I find the username from a Roblox user ID?",
+        answer:
+          "Yes. Enter a numeric Roblox user ID and the tool fetches the public username, display name, avatar, profile URL, and social counts when available.",
+      },
+      {
+        question: "Where can I use the Roblox user ID?",
+        answer:
+          "A user ID is commonly useful for profile URLs, moderation notes, internal lists, scripts, and checking the same account even if the username changes later.",
+      },
+    ],
+    "roblox-avatar-lookup": [
+      {
+        question: "Can I look up a Roblox avatar by username?",
+        answer:
+          "Yes. Use username mode to resolve the account first, then the tool returns the public avatar headshot for that Roblox user.",
+      },
+      {
+        question: "Why might the avatar image be missing?",
+        answer:
+          "Roblox thumbnail services can occasionally delay or fail for an account. The profile details may still load even when the avatar image is temporarily unavailable.",
+      },
+    ],
     "ib-buying-power-simulator": [
       {
         question: "Is this simulator exactly the same as IBKR real-time margin?",
@@ -1178,6 +1231,21 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Inputs: Roblox username or numeric user ID.",
       "Outputs: avatar, display name, account creation date, and social counts.",
     ],
+    "roblox-username-to-id": [
+      "Convert a Roblox username into the account's numeric user ID.",
+      "Inputs: Roblox username, with optional @ prefix cleanup.",
+      "Outputs: user ID, display name, avatar, profile URL, and account details.",
+    ],
+    "roblox-user-id-lookup": [
+      "Find public Roblox account details from a numeric user ID.",
+      "Inputs: Roblox user ID.",
+      "Outputs: username, display name, avatar, profile URL, and social counts.",
+    ],
+    "roblox-avatar-lookup": [
+      "Find a Roblox player's public avatar headshot by username or user ID.",
+      "Inputs: Roblox username or numeric user ID.",
+      "Outputs: avatar image, profile link, display name, and account identifiers.",
+    ],
     "ib-buying-power-simulator": [
       "Estimate remaining buying power from three stock positions (A/B/C) using configurable margin assumptions.",
       "Inputs: net liquidation value, each position market value, and initial/maintenance margin rates.",
@@ -1556,6 +1624,26 @@ function buildMethodology(tool: ToolItem): string[] {
       "Rendering parameters include pixel width, quiet-zone margin, and foreground/background colors.",
       "Output is encoded as PNG data URL for direct download.",
     ],
+    "roblox-player-lookup": [
+      "Username mode resolves the account through Roblox public username APIs before loading profile details.",
+      "User ID mode fetches the profile directly from the numeric account ID.",
+      "Avatar and social counts are fetched from public Roblox thumbnail and friends endpoints when available.",
+    ],
+    "roblox-username-to-id": [
+      "The entered username is normalized by trimming whitespace and removing leading @ symbols.",
+      "Roblox username resolution returns the account's stable numeric ID when a matching public user exists.",
+      "The numeric ID is then used to fetch profile, avatar, and social count data for confirmation.",
+    ],
+    "roblox-user-id-lookup": [
+      "The input must be a positive integer Roblox user ID.",
+      "Profile details are fetched directly by ID, avoiding ambiguity from display names or username changes.",
+      "Related avatar and social count endpoints are queried separately, so partial data can still appear when one public endpoint is unavailable.",
+    ],
+    "roblox-avatar-lookup": [
+      "The lookup resolves username or user ID first so the avatar request targets one exact Roblox account.",
+      "The avatar headshot is requested from Roblox public thumbnail services at a high display size.",
+      "Profile fields are shown next to the image so you can verify the avatar belongs to the intended account.",
+    ],
     "compress-pdf": [
       "The PDF is loaded client-side and re-saved with optimized object stream settings to reduce overhead.",
       "Compression strength determines how aggressively the browser-side save step optimizes the document structure.",
@@ -1784,7 +1872,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Generate one-click links to official and commercial lookup sites.",
               "Open each source to verify filings, profile, and reputation signals.",
             ]
-        : tool.slug === "roblox-player-lookup"
+        : isRobloxTool(tool.slug)
           ? [
               "Choose lookup mode: username or numeric user ID.",
               "Submit your query and fetch public profile information from Roblox endpoints.",
@@ -2253,7 +2341,13 @@ export default async function ToolPage({ params }: ToolPageProps) {
       {tool.slug === "emoji-catalog" ? <EmojiCatalogTool /> : null}
       {tool.slug === "qr-code-generator" ? <QrCodeGeneratorTool /> : null}
       {tool.slug === "company-lookup-navigator" ? <CompanyLookupNavigatorTool /> : null}
-      {tool.slug === "roblox-player-lookup" ? <RobloxPlayerLookupTool /> : null}
+      {isRobloxTool(tool.slug) ? (
+        <RobloxPlayerLookupTool
+          title={tool.name}
+          description={tool.summary}
+          defaultMode={tool.slug === "roblox-user-id-lookup" ? "userId" : "username"}
+        />
+      ) : null}
       {tool.slug === "age-calculator" ? <AgeCalculatorTool /> : null}
       {tool.slug === "pdf-to-jpg" ? <PdfToJpgTool /> : null}
       {tool.slug === "jpg-to-pdf" ? <JpgToPdfTool /> : null}
@@ -2344,7 +2438,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "emoji-catalog" &&
       tool.slug !== "qr-code-generator" &&
       tool.slug !== "company-lookup-navigator" &&
-      tool.slug !== "roblox-player-lookup" &&
+      !isRobloxTool(tool.slug) &&
       tool.slug !== "age-calculator" &&
       tool.slug !== "pdf-to-jpg" &&
       tool.slug !== "jpg-to-pdf" &&

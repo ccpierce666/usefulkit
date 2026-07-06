@@ -320,6 +320,27 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "roblox profile finder",
     "roblox player search",
   ],
+  "roblox-username-to-id": [
+    "roblox username to id",
+    "roblox user id finder",
+    "find roblox id by username",
+    "roblox name to id",
+    "roblox username lookup id",
+  ],
+  "roblox-user-id-lookup": [
+    "roblox user id lookup",
+    "roblox id lookup",
+    "find roblox user by id",
+    "roblox profile by user id",
+    "roblox numeric id lookup",
+  ],
+  "roblox-avatar-lookup": [
+    "roblox avatar lookup",
+    "roblox avatar finder",
+    "roblox profile picture lookup",
+    "roblox headshot lookup",
+    "roblox avatar by username",
+  ],
   "ib-buying-power-simulator": [
     "ib buying power calculator",
     "interactive brokers buying power",
@@ -459,6 +480,12 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Convert MP4 to GIF online with adjustable duration, frame rate, and output size for social sharing.",
   "roblox-player-lookup":
     "Look up Roblox player profile data by username or user ID, including avatar, display name, and social counts.",
+  "roblox-username-to-id":
+    "Convert a Roblox username to a numeric user ID and review public profile details, avatar, and account creation date.",
+  "roblox-user-id-lookup":
+    "Look up a Roblox account by user ID and fetch public profile details such as username, display name, avatar, and social counts.",
+  "roblox-avatar-lookup":
+    "Find a Roblox player's public avatar headshot by username or user ID, with profile links and account details.",
   "ib-buying-power-simulator":
     "Estimate Interactive Brokers style remaining stock buying power from existing positions with simplified Reg-T assumptions.",
   "etf-move-calculator":
@@ -491,4 +518,7 @@ export const toolSeoTitleOverrides: Partial<Record<string, string>> = {
   "w2-vs-1099-calculator": "1099 vs W-2 Calculator (Contractor vs Employee Pay)",
   "home-electricity-bill-estimator": "Home Electricity Bill Estimator",
   "ev-charging-cost-calculator": "EV Charging Cost Calculator by State",
+  "roblox-username-to-id": "Roblox Username to ID Converter",
+  "roblox-user-id-lookup": "Roblox User ID Lookup",
+  "roblox-avatar-lookup": "Roblox Avatar Lookup",
 };

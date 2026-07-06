@@ -5,6 +5,12 @@ import { useState } from "react";
 
 type LookupMode = "username" | "userId";
 
+type RobloxPlayerLookupToolProps = {
+  title?: string;
+  description?: string;
+  defaultMode?: LookupMode;
+};
+
 type LookupResponse = {
   user: {
     id: number;
@@ -29,8 +35,12 @@ function formatNumber(value: number | null): string {
   return value.toLocaleString("en-US");
 }
 
-export function RobloxPlayerLookupTool() {
-  const [mode, setMode] = useState<LookupMode>("username");
+export function RobloxPlayerLookupTool({
+  title = "Roblox Player Lookup",
+  description = "Search public Roblox player information by username or user ID.",
+  defaultMode = "username",
+}: RobloxPlayerLookupToolProps) {
+  const [mode, setMode] = useState<LookupMode>(defaultMode);
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -78,10 +88,8 @@ export function RobloxPlayerLookupTool() {
   return (
     <section className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
       <div className="rounded-3xl border border-line bg-surface p-4 shadow-sm sm:p-6">
-        <h2 className="text-xl font-semibold sm:text-2xl">Roblox Player Lookup</h2>
-        <p className="mt-2 text-sm text-muted">
-          Search public Roblox player information by username or user ID.
-        </p>
+        <h2 className="text-xl font-semibold sm:text-2xl">{title}</h2>
+        <p className="mt-2 text-sm text-muted">{description}</p>
 
         <div className="mt-4 flex flex-wrap gap-2">
           <button

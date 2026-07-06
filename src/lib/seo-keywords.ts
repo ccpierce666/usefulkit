@@ -341,6 +341,20 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "roblox headshot lookup",
     "roblox avatar by username",
   ],
+  "roblox-group-lookup": [
+    "roblox group lookup",
+    "roblox group id lookup",
+    "roblox group finder",
+    "roblox group member count",
+    "roblox group owner lookup",
+  ],
+  "roblox-game-lookup": [
+    "roblox game lookup",
+    "roblox experience lookup",
+    "roblox universe id lookup",
+    "roblox place id lookup",
+    "roblox game stats lookup",
+  ],
   "ib-buying-power-simulator": [
     "ib buying power calculator",
     "interactive brokers buying power",
@@ -486,6 +500,10 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Look up a Roblox account by user ID and fetch public profile details such as username, display name, avatar, and social counts.",
   "roblox-avatar-lookup":
     "Find a Roblox player's public avatar headshot by username or user ID, with profile links and account details.",
+  "roblox-group-lookup":
+    "Look up public Roblox group details by group ID, including icon, owner, member count, join status, and role summary.",
+  "roblox-game-lookup":
+    "Look up Roblox game and experience details by universe ID or place ID, including creator, visits, active players, favorites, and icon.",
   "ib-buying-power-simulator":
     "Estimate Interactive Brokers style remaining stock buying power from existing positions with simplified Reg-T assumptions.",
   "etf-move-calculator":
@@ -521,4 +539,6 @@ export const toolSeoTitleOverrides: Partial<Record<string, string>> = {
   "roblox-username-to-id": "Roblox Username to ID Converter",
   "roblox-user-id-lookup": "Roblox User ID Lookup",
   "roblox-avatar-lookup": "Roblox Avatar Lookup",
+  "roblox-group-lookup": "Roblox Group Lookup",
+  "roblox-game-lookup": "Roblox Game & Experience Lookup",
 };

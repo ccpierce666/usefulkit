@@ -63,6 +63,8 @@ import { PdfToTextTool } from "@/components/pdf-to-text-tool";
 import { PngToJpgTool } from "@/components/png-to-jpg-tool";
 import { QuarterlyTaxSafePayPlannerTool } from "@/components/quarterly-tax-safe-pay-planner-tool";
 import { QrCodeGeneratorTool } from "@/components/qr-code-generator-tool";
+import { RobloxExperienceLookupTool } from "@/components/roblox-experience-lookup-tool";
+import { RobloxGroupLookupTool } from "@/components/roblox-group-lookup-tool";
 import { RobloxPlayerLookupTool } from "@/components/roblox-player-lookup-tool";
 import { RemoveBackgroundTool } from "@/components/remove-background-tool";
 import { RemoveLineBreaksTool } from "@/components/remove-line-breaks-tool";
@@ -158,6 +160,10 @@ function isRobloxTool(slug: string): boolean {
   return robloxToolSlugs.includes(slug);
 }
 
+function hasCustomToolPanel(slug: string): boolean {
+  return isRobloxTool(slug) || slug === "roblox-group-lookup" || slug === "roblox-game-lookup";
+}
+
 const categoryTips: Record<ToolItem["category"], string> = {
   "file-tools":
     "For file tools, start with a small sample file first, confirm output quality, then process larger files. This helps avoid repeated work and makes your workflow more predictable.",
@@ -207,6 +213,10 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The tool uses a numeric Roblox user ID to fetch public profile fields, avatar headshot, and social count data from Roblox endpoints.",
     "roblox-avatar-lookup":
       "The tool resolves a Roblox username or user ID, then fetches the public avatar headshot alongside profile details for confirmation.",
+    "roblox-group-lookup":
+      "The tool fetches public Roblox group details by group ID, then enriches the result with group icon and role summary endpoints.",
+    "roblox-game-lookup":
+      "The tool resolves either a Roblox universe ID directly or converts a place ID into its universe before loading public experience stats and icon data.",
     "ib-buying-power-simulator":
       "The simulator estimates initial and maintenance margin usage from A/B/C stock position values, then projects remaining buying power from your net liquidation value and assumed initial margin rate.",
     "options-breakeven-pl-calculator":
@@ -843,6 +853,30 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "Roblox thumbnail services can occasionally delay or fail for an account. The profile details may still load even when the avatar image is temporarily unavailable.",
       },
     ],
+    "roblox-group-lookup": [
+      {
+        question: "How do I find a Roblox group ID?",
+        answer:
+          "Open the Roblox group page and copy the numeric ID from the URL. Enter that group ID here to fetch public group details.",
+      },
+      {
+        question: "What group data can this tool show?",
+        answer:
+          "It can show public group name, icon, owner, member count, public join status, verification badge status, description, and top role summary when available.",
+      },
+    ],
+    "roblox-game-lookup": [
+      {
+        question: "What is the difference between a Roblox universe ID and place ID?",
+        answer:
+          "A universe ID identifies the whole experience, while a place ID identifies a playable place inside that experience. This tool supports both.",
+      },
+      {
+        question: "What game stats can this lookup return?",
+        answer:
+          "It can return public experience fields such as creator, active players, visits, favorites, max players, created/updated dates, icon, and root place ID.",
+      },
+    ],
     "ib-buying-power-simulator": [
       {
         question: "Is this simulator exactly the same as IBKR real-time margin?",
@@ -1246,6 +1280,16 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Inputs: Roblox username or numeric user ID.",
       "Outputs: avatar image, profile link, display name, and account identifiers.",
     ],
+    "roblox-group-lookup": [
+      "Look up public Roblox group details from a numeric group ID.",
+      "Inputs: Roblox group ID from a group URL.",
+      "Outputs: group icon, owner, member count, join status, description, and role summary.",
+    ],
+    "roblox-game-lookup": [
+      "Look up public Roblox game and experience details by universe ID or place ID.",
+      "Inputs: Roblox universe ID or place ID.",
+      "Outputs: icon, creator, active players, visits, favorites, max players, and root place ID.",
+    ],
     "ib-buying-power-simulator": [
       "Estimate remaining buying power from three stock positions (A/B/C) using configurable margin assumptions.",
       "Inputs: net liquidation value, each position market value, and initial/maintenance margin rates.",
@@ -1644,6 +1688,16 @@ function buildMethodology(tool: ToolItem): string[] {
       "The avatar headshot is requested from Roblox public thumbnail services at a high display size.",
       "Profile fields are shown next to the image so you can verify the avatar belongs to the intended account.",
     ],
+    "roblox-group-lookup": [
+      "The group ID is validated as a positive integer before any Roblox request runs.",
+      "Group profile data is fetched from Roblox group endpoints, while icon and roles are fetched from separate public endpoints.",
+      "Role data is sorted by rank and capped in the UI so large groups remain easy to scan.",
+    ],
+    "roblox-game-lookup": [
+      "Universe ID mode queries the Roblox games endpoint directly for one experience.",
+      "Place ID mode first resolves the place to its parent universe, then fetches the same experience data.",
+      "Game icon data is requested separately from Roblox thumbnail services and shown with public stats for verification.",
+    ],
     "compress-pdf": [
       "The PDF is loaded client-side and re-saved with optimized object stream settings to reduce overhead.",
       "Compression strength determines how aggressively the browser-side save step optimizes the document structure.",
@@ -1877,6 +1931,18 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Choose lookup mode: username or numeric user ID.",
               "Submit your query and fetch public profile information from Roblox endpoints.",
               "Review avatar, account details, and social counts in one panel.",
+            ]
+        : tool.slug === "roblox-group-lookup"
+          ? [
+              "Enter the numeric Roblox group ID from a group URL.",
+              "Fetch public group profile, icon, owner, and member data from Roblox endpoints.",
+              "Review role summary and open the official Roblox group page when needed.",
+            ]
+        : tool.slug === "roblox-game-lookup"
+          ? [
+              "Choose universe ID or place ID mode.",
+              "Submit the Roblox ID and resolve public experience details.",
+              "Review creator, activity stats, visits, favorites, root place ID, and icon in one panel.",
             ]
         : tool.slug === "ib-buying-power-simulator"
           ? [
@@ -2348,6 +2414,8 @@ export default async function ToolPage({ params }: ToolPageProps) {
           defaultMode={tool.slug === "roblox-user-id-lookup" ? "userId" : "username"}
         />
       ) : null}
+      {tool.slug === "roblox-group-lookup" ? <RobloxGroupLookupTool /> : null}
+      {tool.slug === "roblox-game-lookup" ? <RobloxExperienceLookupTool /> : null}
       {tool.slug === "age-calculator" ? <AgeCalculatorTool /> : null}
       {tool.slug === "pdf-to-jpg" ? <PdfToJpgTool /> : null}
       {tool.slug === "jpg-to-pdf" ? <JpgToPdfTool /> : null}
@@ -2438,7 +2506,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
       tool.slug !== "emoji-catalog" &&
       tool.slug !== "qr-code-generator" &&
       tool.slug !== "company-lookup-navigator" &&
-      !isRobloxTool(tool.slug) &&
+      !hasCustomToolPanel(tool.slug) &&
       tool.slug !== "age-calculator" &&
       tool.slug !== "pdf-to-jpg" &&
       tool.slug !== "jpg-to-pdf" &&

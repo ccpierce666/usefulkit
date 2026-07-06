@@ -290,6 +290,20 @@ export const tools: ToolItem[] = [
     keyword: "roblox avatar lookup",
   },
   {
+    slug: "roblox-group-lookup",
+    name: "Roblox Group Lookup",
+    summary: "Find public Roblox group details, owner, icon, member count, and role summary by group ID.",
+    category: "text-tools",
+    keyword: "roblox group lookup",
+  },
+  {
+    slug: "roblox-game-lookup",
+    name: "Roblox Game Lookup",
+    summary: "Look up Roblox game and experience details by universe ID or place ID.",
+    category: "text-tools",
+    keyword: "roblox game lookup",
+  },
+  {
     slug: "age-calculator",
     name: "Age Calculator",
     summary: "Calculate exact age from a date of birth.",

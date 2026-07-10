@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { homeKeywordClusters } from "@/lib/seo-keywords";
+import { robloxGames, robloxToolIdeas } from "@/lib/roblox-hub";
 import { categoryLabels, categoryOrder, getToolsByCategory, tools } from "@/lib/tools";
 
 const featuredSlugs = [
@@ -33,6 +34,8 @@ export const metadata: Metadata = {
 
 export default function Home() {
   const featuredTools = tools.filter((tool) => featuredSlugs.includes(tool.slug));
+  const featuredRobloxGames = robloxGames.slice(0, 3);
+  const featuredRobloxTools = robloxToolIdeas.slice(0, 4);
   const websiteData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -75,13 +78,65 @@ export default function Home() {
             Browse All Tools
           </Link>
           <Link
-            href="/categories/file-tools"
+            href="/roblox"
             className="rounded-xl border border-line bg-white px-5 py-3 text-sm font-semibold text-foreground transition hover:border-brand hover:text-brand"
           >
-            Start With File Tools
+            Explore Roblox Hub
           </Link>
         </div>
       </header>
+
+      <section className="mt-12 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-brand">
+              Roblox Games & Tools
+            </p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight">
+              Game discovery, codes, value lists, and calculators.
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-muted sm:text-base">
+              UsefulKit now has a Roblox channel for players who need quick game picks, beginner
+              routes, lookup tools, and practical game guides.
+            </p>
+          </div>
+          <Link href="/roblox" className="text-sm font-semibold text-brand hover:text-brand-strong">
+            Open Roblox hub
+          </Link>
+        </div>
+        <div className="mt-5 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid gap-3 sm:grid-cols-3">
+            {featuredRobloxGames.map((game) => (
+              <Link
+                key={game.slug}
+                href={`/roblox/games/${game.slug}`}
+                className="rounded-2xl border border-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-brand"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wide text-brand">
+                  {game.category}
+                </p>
+                <h3 className="mt-2 font-semibold">{game.name}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted">{game.tagline}</p>
+              </Link>
+            ))}
+          </div>
+          <div className="rounded-2xl border border-line bg-white p-4">
+            <h3 className="font-semibold">Tool roadmap</h3>
+            <div className="mt-3 grid gap-2">
+              {featuredRobloxTools.map((tool) => (
+                <Link
+                  key={tool.slug}
+                  href={tool.href}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-line px-3 py-2 text-sm transition hover:border-brand hover:text-brand"
+                >
+                  <span className="font-semibold">{tool.name}</span>
+                  <span className="shrink-0 text-xs text-muted">{tool.status}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="mt-12">
         <h2 className="text-2xl font-bold tracking-tight">Popular Tools</h2>

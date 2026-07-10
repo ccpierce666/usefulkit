@@ -22,6 +22,7 @@ function chipClassName(active: boolean): string {
 export function SiteNav() {
   const pathname = usePathname();
   const isToolsActive = pathname === "/tools" || pathname.startsWith("/tools/");
+  const isRobloxActive = pathname === "/roblox" || pathname.startsWith("/roblox/");
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
@@ -41,6 +42,9 @@ export function SiteNav() {
         <nav className="hidden items-center gap-5 text-sm font-semibold md:flex">
           <Link href="/tools" className={navClassName(isToolsActive)}>
             All Tools
+          </Link>
+          <Link href="/roblox" className={navClassName(isRobloxActive)}>
+            Roblox
           </Link>
           {categoryOrder.map((category) => {
             const href = `/categories/${category}`;
@@ -77,6 +81,9 @@ export function SiteNav() {
         <nav className="flex gap-2 overflow-x-auto whitespace-nowrap">
           <Link href="/tools" className={chipClassName(isToolsActive)}>
             All Tools
+          </Link>
+          <Link href="/roblox" className={chipClassName(isRobloxActive)}>
+            Roblox
           </Link>
           {categoryOrder.map((category) => {
             const href = `/categories/${category}`;

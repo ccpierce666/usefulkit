@@ -9,6 +9,7 @@ const scriptSrc = isDev
 const nextConfig: NextConfig = {
   distDir: isVercel ? ".next" : ".next-app",
   devIndicators: false,
+  allowedDevOrigins: ["127.0.0.1"],
   async headers() {
     return [
       {

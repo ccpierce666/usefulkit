@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { robloxGames } from "@/lib/roblox-hub";
 import { categoryOrder, tools } from "@/lib/tools";
 
 const siteUrl = "https://usefulkit.io";
@@ -22,6 +23,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/roblox`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/roblox/games`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: `${siteUrl}/privacy`,
@@ -55,6 +68,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const tool of tools) {
     routes.push({
       url: `${siteUrl}/tools/${tool.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    });
+  }
+
+  for (const game of robloxGames) {
+    routes.push({
+      url: `${siteUrl}/roblox/games/${game.slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,

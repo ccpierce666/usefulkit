@@ -355,6 +355,20 @@ export const toolKeywordClusters: Partial<Record<string, string[]>> = {
     "roblox place id lookup",
     "roblox game stats lookup",
   ],
+  "roblox-badge-lookup": [
+    "roblox badge lookup",
+    "roblox badge id lookup",
+    "roblox badge stats",
+    "roblox badge finder",
+    "roblox badge win rate",
+  ],
+  "roblox-user-groups-lookup": [
+    "roblox user groups lookup",
+    "roblox player groups",
+    "roblox groups by username",
+    "what groups is a roblox user in",
+    "roblox user role lookup",
+  ],
   "ib-buying-power-simulator": [
     "ib buying power calculator",
     "interactive brokers buying power",
@@ -504,6 +518,10 @@ export const toolSeoDescriptionOverrides: Partial<Record<string, string>> = {
     "Look up public Roblox group details by group ID, including icon, owner, member count, join status, and role summary.",
   "roblox-game-lookup":
     "Look up Roblox game and experience details by universe ID or place ID, including creator, visits, active players, favorites, and icon.",
+  "roblox-badge-lookup":
+    "Look up Roblox badge details by badge ID, including icon, awarding game, awarded count, past-day awards, and win rate.",
+  "roblox-user-groups-lookup":
+    "Look up public Roblox group memberships and roles for a username or user ID, including group IDs, ranks, and member counts.",
   "ib-buying-power-simulator":
     "Estimate Interactive Brokers style remaining stock buying power from existing positions with simplified Reg-T assumptions.",
   "etf-move-calculator":
@@ -541,4 +559,6 @@ export const toolSeoTitleOverrides: Partial<Record<string, string>> = {
   "roblox-avatar-lookup": "Roblox Avatar Lookup",
   "roblox-group-lookup": "Roblox Group Lookup",
   "roblox-game-lookup": "Roblox Game & Experience Lookup",
+  "roblox-badge-lookup": "Roblox Badge Lookup",
+  "roblox-user-groups-lookup": "Roblox User Groups Lookup",
 };

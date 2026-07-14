@@ -78,6 +78,66 @@ function getNumber(value: string, fallback = 0): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function getGrowGardenDecision({
+  total,
+  normalTotal,
+  quantity,
+  mutationMultiplier,
+  bonusPercent,
+}: {
+  total: number;
+  normalTotal: number;
+  quantity: number;
+  mutationMultiplier: number;
+  bonusPercent: number;
+}) {
+  const valuePerCrop = quantity > 0 ? total / quantity : 0;
+  const setupMultiplier = normalTotal > 0 ? total / normalTotal : 0;
+
+  if (quantity <= 0) {
+    return {
+      rating: "No harvest",
+      action: "Enter a quantity before making a sell or trade decision.",
+      reason: "UsefulKit needs at least one crop to compare value, multiplier, and bonus impact.",
+      efficiency: "0 value per crop",
+    };
+  }
+
+  if (setupMultiplier >= 10 || valuePerCrop >= 10000) {
+    return {
+      rating: "Premium harvest",
+      action: "Hold for trade leverage or sell only if you need cash immediately.",
+      reason: "The current mutation and bonus stack is far above a normal harvest.",
+      efficiency: `${numberFormat(valuePerCrop)} value per crop`,
+    };
+  }
+
+  if (setupMultiplier >= 5 || valuePerCrop >= 2500) {
+    return {
+      rating: "Strong sell",
+      action: "Sell after checking whether the crop is needed for an event or pet goal.",
+      reason: "This setup has a strong multiplier, but it is not rare enough to always hold.",
+      efficiency: `${numberFormat(valuePerCrop)} value per crop`,
+    };
+  }
+
+  if (mutationMultiplier === 1 && bonusPercent < 25) {
+    return {
+      rating: "Low leverage",
+      action: "Wait for a mutation, pet boost, or better crop before treating it as a premium trade.",
+      reason: "Most of the value still comes from the base crop, so the upside is limited.",
+      efficiency: `${numberFormat(valuePerCrop)} value per crop`,
+    };
+  }
+
+  return {
+    rating: "Playable profit",
+    action: "Sell for steady progress, or hold only if the crop supports your next upgrade.",
+    reason: "The harvest is useful, but the setup does not justify delaying every sale.",
+    efficiency: `${numberFormat(valuePerCrop)} value per crop`,
+  };
+}
+
 function makeNumberInputProps(min = 0, step = "1") {
   return {
     type: "number",
@@ -219,6 +279,13 @@ function GrowGardenCalculator() {
   const boost = 1 + friendBoostValue / 100 + petBoostValue / 100;
   const total = crop.value * mutation.multiplier * qty * boost;
   const normalTotal = crop.value * qty;
+  const decision = getGrowGardenDecision({
+    total,
+    normalTotal,
+    quantity: qty,
+    mutationMultiplier: mutation.multiplier,
+    bonusPercent: friendBoostValue + petBoostValue,
+  });
   const reset = () => {
     setCropName(growCrops[2].name);
     setMutationName(growMutations[0].name);
@@ -247,12 +314,18 @@ function GrowGardenCalculator() {
             Base harvest: {numberFormat(normalTotal)}. Current setup is about{" "}
             {total > 0 && normalTotal > 0 ? `${(total / normalTotal).toFixed(1)}x` : "0x"} base value.
           </p>
+          <div className="mt-4 rounded-2xl border border-brand/20 bg-white p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">UsefulKit decision</p>
+            <p className="mt-1 text-xl font-bold tracking-tight">{decision.rating}</p>
+            <p className="mt-2 text-sm font-semibold text-foreground">{decision.action}</p>
+            <p className="mt-2 text-sm leading-6 text-muted">{decision.reason}</p>
+          </div>
           <DetailGrid
             items={[
               { label: "Base value", value: numberFormat(crop.value) },
               { label: "Mutation", value: `${mutation.multiplier}x` },
               { label: "Bonus", value: `${friendBoostValue + petBoostValue}%` },
-              { label: "Formula", value: "base x mutation x qty x bonus" },
+              { label: "Efficiency", value: decision.efficiency },
             ]}
           />
         </div>

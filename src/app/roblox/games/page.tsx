@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { robloxCategoryLinks, robloxGames } from "@/lib/roblox-hub";
 
@@ -120,10 +121,12 @@ export default function RobloxGamesPage() {
             className="grid overflow-hidden rounded-3xl border border-line bg-surface shadow-sm transition hover:-translate-y-0.5 hover:border-brand lg:grid-cols-[320px_1fr]"
           >
             <div className="relative aspect-[16/9] bg-white lg:aspect-auto lg:min-h-64">
-              <div
-                aria-label={`${game.name} Roblox thumbnail`}
-                className="absolute inset-0 bg-[#dbe4ef] bg-cover bg-center"
-                style={{ backgroundImage: `url(${game.imageUrl})` }}
+              <Image
+                src={game.imageUrl}
+                alt={`${game.name} Roblox thumbnail`}
+                fill
+                sizes="(min-width: 1024px) 320px, 100vw"
+                className="object-cover"
               />
             </div>
             <div className="p-5 sm:p-6">

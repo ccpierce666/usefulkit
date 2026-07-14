@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   getRobloxGamesWithCodes,
@@ -127,10 +128,13 @@ export default function RobloxHubPage() {
                 href={`/roblox/games/${game.slug}`}
                 className="group relative overflow-hidden rounded-2xl border border-white/80 bg-white shadow-sm"
               >
-                <div
-                  aria-label={`${game.name} Roblox experience thumbnail`}
-                  className="absolute inset-0 bg-[#dbe4ef] bg-cover bg-center transition duration-300 group-hover:scale-105"
-                  style={{ backgroundImage: `url(${game.imageUrl})` }}
+                <Image
+                  src={game.imageUrl}
+                  alt={`${game.name} Roblox experience thumbnail`}
+                  fill
+                  sizes="(min-width: 1024px) 230px, 50vw"
+                  className="object-cover transition duration-300 group-hover:scale-105"
+                  priority
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-3">
                   <p className="text-sm font-semibold text-white">{game.name}</p>
@@ -177,10 +181,12 @@ export default function RobloxHubPage() {
               className="overflow-hidden rounded-3xl border border-line bg-surface shadow-sm transition hover:-translate-y-0.5 hover:border-brand"
             >
               <div className="relative aspect-[16/9] bg-white">
-                <div
-                  aria-label={`${game.name} Roblox thumbnail`}
-                  className="absolute inset-0 bg-[#dbe4ef] bg-cover bg-center"
-                  style={{ backgroundImage: `url(${game.imageUrl})` }}
+                <Image
+                  src={game.imageUrl}
+                  alt={`${game.name} Roblox thumbnail`}
+                  fill
+                  sizes="(min-width: 1024px) 350px, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover"
                 />
               </div>
               <div className="p-5">

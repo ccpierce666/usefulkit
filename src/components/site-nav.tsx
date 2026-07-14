@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ToolSearch } from "@/components/tool-search";
-import { categoryLabels, categoryOrder } from "@/lib/tools";
 
 function navClassName(active: boolean): string {
   return active
@@ -19,10 +18,36 @@ function chipClassName(active: boolean): string {
     : "rounded-full border border-line bg-white px-3 py-1.5 text-xs font-semibold text-muted";
 }
 
+const robloxLookupPaths = [
+  "/tools/roblox-player-lookup",
+  "/tools/roblox-username-to-id",
+  "/tools/roblox-user-id-lookup",
+  "/tools/roblox-avatar-lookup",
+];
+
 export function SiteNav() {
   const pathname = usePathname();
-  const isToolsActive = pathname === "/tools" || pathname.startsWith("/tools/");
+  const isRobloxLookupActive = robloxLookupPaths.some((href) => pathname === href);
+  const isRobloxExperienceActive = pathname === "/tools/roblox-game-lookup";
+  const isRobloxGroupActive =
+    pathname === "/tools/roblox-group-lookup" || pathname === "/tools/roblox-user-groups-lookup";
+  const isRobloxBadgeActive = pathname === "/tools/roblox-badge-lookup";
+  const isRobloxToolActive =
+    isRobloxLookupActive || isRobloxExperienceActive || isRobloxGroupActive || isRobloxBadgeActive;
+  const isToolsActive =
+    pathname === "/tools" ||
+    pathname.startsWith("/categories/") ||
+    (pathname.startsWith("/tools/") && !isRobloxToolActive);
   const isRobloxActive = pathname === "/roblox" || pathname.startsWith("/roblox/");
+  const navItems = [
+    { href: "/roblox", label: "Roblox", active: isRobloxActive && pathname !== "/roblox/games" && !pathname.startsWith("/roblox/games/") },
+    { href: "/roblox/games", label: "Games", active: pathname === "/roblox/games" || pathname.startsWith("/roblox/games/") },
+    { href: "/tools/roblox-player-lookup", label: "Player Lookup", active: isRobloxLookupActive },
+    { href: "/tools/roblox-game-lookup", label: "Experience Lookup", active: isRobloxExperienceActive },
+    { href: "/tools/roblox-group-lookup", label: "Groups", active: isRobloxGroupActive },
+    { href: "/tools/roblox-badge-lookup", label: "Badges", active: isRobloxBadgeActive },
+    { href: "/tools", label: "All Tools", active: isToolsActive },
+  ];
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
@@ -40,21 +65,11 @@ export function SiteNav() {
           <span>UsefulKit</span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm font-semibold md:flex">
-          <Link href="/tools" className={navClassName(isToolsActive)}>
-            All Tools
-          </Link>
-          <Link href="/roblox" className={navClassName(isRobloxActive)}>
-            Roblox
-          </Link>
-          {categoryOrder.map((category) => {
-            const href = `/categories/${category}`;
-            const isActive = pathname === href;
-            return (
-              <Link key={category} href={href} className={navClassName(isActive)}>
-                {categoryLabels[category]}
-              </Link>
-            );
-          })}
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href} className={navClassName(item.active)}>
+              {item.label}
+            </Link>
+          ))}
           <button
             type="button"
             onClick={() => setSearchOpen((v) => !v)}
@@ -79,21 +94,11 @@ export function SiteNav() {
       ) : null}
       <div className="mx-auto w-full max-w-6xl px-4 pb-3 sm:px-6 md:hidden lg:px-8">
         <nav className="flex gap-2 overflow-x-auto whitespace-nowrap">
-          <Link href="/tools" className={chipClassName(isToolsActive)}>
-            All Tools
-          </Link>
-          <Link href="/roblox" className={chipClassName(isRobloxActive)}>
-            Roblox
-          </Link>
-          {categoryOrder.map((category) => {
-            const href = `/categories/${category}`;
-            const isActive = pathname === href;
-            return (
-              <Link key={category} href={href} className={chipClassName(isActive)}>
-                {categoryLabels[category]}
-              </Link>
-            );
-          })}
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href} className={chipClassName(item.active)}>
+              {item.label}
+            </Link>
+          ))}
           <button
             type="button"
             onClick={() => setSearchOpen((v) => !v)}

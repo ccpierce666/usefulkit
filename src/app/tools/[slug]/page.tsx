@@ -63,9 +63,11 @@ import { PdfToTextTool } from "@/components/pdf-to-text-tool";
 import { PngToJpgTool } from "@/components/png-to-jpg-tool";
 import { QuarterlyTaxSafePayPlannerTool } from "@/components/quarterly-tax-safe-pay-planner-tool";
 import { QrCodeGeneratorTool } from "@/components/qr-code-generator-tool";
+import { RobloxBadgeLookupTool } from "@/components/roblox-badge-lookup-tool";
 import { RobloxExperienceLookupTool } from "@/components/roblox-experience-lookup-tool";
 import { RobloxGroupLookupTool } from "@/components/roblox-group-lookup-tool";
 import { RobloxPlayerLookupTool } from "@/components/roblox-player-lookup-tool";
+import { RobloxUserGroupsLookupTool } from "@/components/roblox-user-groups-lookup-tool";
 import { RemoveBackgroundTool } from "@/components/remove-background-tool";
 import { RemoveLineBreaksTool } from "@/components/remove-line-breaks-tool";
 import { RotatePdfTool } from "@/components/rotate-pdf-tool";
@@ -161,7 +163,13 @@ function isRobloxTool(slug: string): boolean {
 }
 
 function hasCustomToolPanel(slug: string): boolean {
-  return isRobloxTool(slug) || slug === "roblox-group-lookup" || slug === "roblox-game-lookup";
+  return (
+    isRobloxTool(slug) ||
+    slug === "roblox-group-lookup" ||
+    slug === "roblox-game-lookup" ||
+    slug === "roblox-badge-lookup" ||
+    slug === "roblox-user-groups-lookup"
+  );
 }
 
 const categoryTips: Record<ToolItem["category"], string> = {
@@ -217,6 +225,10 @@ function buildUsageGuide(tool: ToolItem, categoryName: string): GuideSection[] {
       "The tool fetches public Roblox group details by group ID, then enriches the result with group icon and role summary endpoints.",
     "roblox-game-lookup":
       "The tool resolves either a Roblox universe ID directly or converts a place ID into its universe before loading public experience stats and icon data.",
+    "roblox-badge-lookup":
+      "The tool fetches public Roblox badge metadata by badge ID, then enriches it with thumbnail data and award statistics when Roblox exposes them.",
+    "roblox-user-groups-lookup":
+      "The tool resolves a username or user ID, fetches public group-role memberships, then sorts the list by primary group and member count for scanning.",
     "ib-buying-power-simulator":
       "The simulator estimates initial and maintenance margin usage from A/B/C stock position values, then projects remaining buying power from your net liquidation value and assumed initial margin rate.",
     "options-breakeven-pl-calculator":
@@ -877,6 +889,30 @@ function buildFaqItems(tool: ToolItem): FaqItem[] {
           "It can return public experience fields such as creator, active players, visits, favorites, max players, created/updated dates, icon, and root place ID.",
       },
     ],
+    "roblox-badge-lookup": [
+      {
+        question: "Where do I find a Roblox badge ID?",
+        answer:
+          "Open a Roblox badge page and copy the numeric ID from the URL. Paste that badge ID into the tool to fetch public badge details.",
+      },
+      {
+        question: "What Roblox badge stats can this show?",
+        answer:
+          "When available, the page can show awarded count, past-day awarded count, win rate, icon, enabled status, and the awarding experience.",
+      },
+    ],
+    "roblox-user-groups-lookup": [
+      {
+        question: "Can I search user groups by Roblox username?",
+        answer:
+          "Yes. Username mode resolves the account ID first, then loads public group-role memberships for that Roblox user.",
+      },
+      {
+        question: "Why might a Roblox user's group list look incomplete?",
+        answer:
+          "The tool only shows group memberships returned by Roblox public endpoints. Private, restricted, or temporarily unavailable data may not appear.",
+      },
+    ],
     "ib-buying-power-simulator": [
       {
         question: "Is this simulator exactly the same as IBKR real-time margin?",
@@ -1290,6 +1326,16 @@ function buildQuickAnswer(tool: ToolItem, categoryName: string): string[] {
       "Inputs: Roblox universe ID or place ID.",
       "Outputs: icon, creator, active players, visits, favorites, max players, and root place ID.",
     ],
+    "roblox-badge-lookup": [
+      "Look up public Roblox badge metadata and award statistics from a badge ID.",
+      "Inputs: Roblox badge ID from a badge URL.",
+      "Outputs: badge icon, enabled status, awarding game, awarded count, past-day awards, and win rate.",
+    ],
+    "roblox-user-groups-lookup": [
+      "Find public Roblox group memberships and roles for a player.",
+      "Inputs: Roblox username or numeric user ID.",
+      "Outputs: group names, group IDs, roles, ranks, member counts, and group links.",
+    ],
     "ib-buying-power-simulator": [
       "Estimate remaining buying power from three stock positions (A/B/C) using configurable margin assumptions.",
       "Inputs: net liquidation value, each position market value, and initial/maintenance margin rates.",
@@ -1698,6 +1744,16 @@ function buildMethodology(tool: ToolItem): string[] {
       "Place ID mode first resolves the place to its parent universe, then fetches the same experience data.",
       "Game icon data is requested separately from Roblox thumbnail services and shown with public stats for verification.",
     ],
+    "roblox-badge-lookup": [
+      "Badge ID input is validated as a positive integer before Roblox badge endpoints are requested.",
+      "Badge metadata and award statistics are loaded from the public badge endpoint when available.",
+      "Badge icon thumbnails and awarding experience links are shown separately so you can verify the badge source.",
+    ],
+    "roblox-user-groups-lookup": [
+      "Username mode resolves the public Roblox account ID before loading group memberships.",
+      "User ID mode fetches profile identity first, then queries public group-role membership data.",
+      "Returned groups are sorted with primary group first, then by member count, and capped for readable display.",
+    ],
     "compress-pdf": [
       "The PDF is loaded client-side and re-saved with optimized object stream settings to reduce overhead.",
       "Compression strength determines how aggressively the browser-side save step optimizes the document structure.",
@@ -1943,6 +1999,18 @@ export default async function ToolPage({ params }: ToolPageProps) {
               "Choose universe ID or place ID mode.",
               "Submit the Roblox ID and resolve public experience details.",
               "Review creator, activity stats, visits, favorites, root place ID, and icon in one panel.",
+            ]
+        : tool.slug === "roblox-badge-lookup"
+          ? [
+              "Enter the numeric Roblox badge ID from a badge URL.",
+              "Fetch public badge metadata, icon, award stats, and awarding experience data.",
+              "Review awarded count, win rate, enabled status, and official Roblox links.",
+            ]
+        : tool.slug === "roblox-user-groups-lookup"
+          ? [
+              "Choose username or numeric user ID mode.",
+              "Load the user's public Roblox group-role memberships.",
+              "Review group names, IDs, roles, ranks, member counts, and group links.",
             ]
         : tool.slug === "ib-buying-power-simulator"
           ? [
@@ -2416,6 +2484,8 @@ export default async function ToolPage({ params }: ToolPageProps) {
       ) : null}
       {tool.slug === "roblox-group-lookup" ? <RobloxGroupLookupTool /> : null}
       {tool.slug === "roblox-game-lookup" ? <RobloxExperienceLookupTool /> : null}
+      {tool.slug === "roblox-badge-lookup" ? <RobloxBadgeLookupTool /> : null}
+      {tool.slug === "roblox-user-groups-lookup" ? <RobloxUserGroupsLookupTool /> : null}
       {tool.slug === "age-calculator" ? <AgeCalculatorTool /> : null}
       {tool.slug === "pdf-to-jpg" ? <PdfToJpgTool /> : null}
       {tool.slug === "jpg-to-pdf" ? <JpgToPdfTool /> : null}

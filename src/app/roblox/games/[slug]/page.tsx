@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RobloxGameCalculator } from "@/components/roblox-game-calculator";
@@ -19,8 +20,8 @@ export async function generateMetadata({ params }: RobloxGamePageProps): Promise
     return {};
   }
 
-  const title = `${game.name} Guide, Codes, Tools, and Game Details`;
-  const description = `${game.name} guide on UsefulKit: ${game.tagline} Find starter tips, planned tools, FAQ, and SEO page ideas.`;
+  const title = `${game.name} Guide, Calculator, Codes, and Tips`;
+  const description = `${game.name} guide on UsefulKit: ${game.tagline} Use calculators, starter tips, decision notes, and FAQ for faster Roblox progress.`;
 
   return {
     title,
@@ -85,9 +86,10 @@ export default async function RobloxGamePage({ params }: RobloxGamePageProps) {
   const articleData = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: `${game.name} Guide, Tools, and Content Plan`,
+    headline: `${game.name} Guide, Calculator, and Tips`,
     description: game.summary,
     image: game.imageUrl,
+    dateModified: game.lastUpdatedIso,
     author: {
       "@type": "Organization",
       name: "UsefulKit",
@@ -162,7 +164,7 @@ export default async function RobloxGamePage({ params }: RobloxGamePageProps) {
               {game.category}
             </p>
             <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-5xl">
-              {game.name} guide, tools, and content plan
+              {game.name} guide, calculator, and player tips
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-7 text-muted sm:text-lg">
               {game.tagline}
@@ -178,11 +180,14 @@ export default async function RobloxGamePage({ params }: RobloxGamePageProps) {
               ))}
             </div>
           </div>
-          <div className="relative min-h-64 bg-white sm:min-h-80 lg:min-h-full">
-            <div
-              aria-label={`${game.name} Roblox thumbnail`}
-              className="absolute inset-0 bg-[#dbe4ef] bg-cover bg-center"
-              style={{ backgroundImage: `url(${game.imageUrl})` }}
+          <div className="relative min-h-64 overflow-hidden bg-white sm:min-h-80 lg:min-h-full">
+            <Image
+              src={game.imageUrl}
+              alt={`${game.name} Roblox thumbnail`}
+              fill
+              sizes="(min-width: 1024px) 420px, 100vw"
+              className="object-cover"
+              priority
             />
           </div>
         </div>
@@ -202,6 +207,74 @@ export default async function RobloxGamePage({ params }: RobloxGamePageProps) {
         ))}
       </section>
 
+      <section className="mt-4 rounded-3xl border border-line bg-surface p-5 shadow-sm">
+        <div className="grid gap-3 text-sm sm:grid-cols-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Last updated</p>
+            <p className="mt-1 font-semibold text-foreground">{game.lastUpdated}</p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Data confidence</p>
+            <p className="mt-1 font-semibold text-foreground">{game.dataConfidence}</p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Source</p>
+            <p className="mt-1 font-semibold text-foreground">UsefulKit estimates</p>
+          </div>
+        </div>
+        <p className="mt-4 border-t border-line pt-4 text-sm leading-6 text-muted">
+          {game.disclaimer}
+        </p>
+      </section>
+
+      <section className="mt-8 overflow-hidden rounded-3xl border border-line bg-foreground text-white shadow-sm">
+        <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_0.8fr]">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-white/70">
+              Now What?
+            </p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+              {game.decision.nextMove}
+            </h2>
+            <p className="mt-4 max-w-3xl text-sm leading-6 text-white/70 sm:text-base">
+              {game.decision.signal}
+            </p>
+            <div className="mt-5 grid gap-3">
+              {game.decision.paths.map((path) => (
+                <div
+                  key={path.stage}
+                  className="rounded-2xl border border-white/12 bg-white/8 p-4"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-wide text-white/60">
+                    {path.stage}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-white/80">{path.action}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/12 bg-white p-5 text-foreground">
+            <p className="text-sm font-semibold text-brand">Decision snapshot</p>
+            <div className="mt-4 grid gap-3">
+              {game.decision.checks.map((check) => (
+                <div key={check.label} className="rounded-xl border border-line bg-[#f8fafc] p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+                    {check.label}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold">{check.value}</p>
+                </div>
+              ))}
+            </div>
+            <Link
+              href="#calculator"
+              className="mt-5 inline-flex rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-strong"
+            >
+              Open the tool
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="mt-8 rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
         <h2 className="text-2xl font-bold tracking-tight">Quick Take</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-muted sm:text-base">{game.summary}</p>
@@ -216,18 +289,30 @@ export default async function RobloxGamePage({ params }: RobloxGamePageProps) {
         </div>
       </section>
 
-      <RobloxGameCalculator gameSlug={game.slug} gameName={game.name} />
+      <div id="calculator">
+        <RobloxGameCalculator gameSlug={game.slug} gameName={game.name} />
+      </div>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-2">
         <div className="rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
-          <h2 className="text-2xl font-bold tracking-tight">UsefulKit Tool Roadmap</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Tools For This Game</h2>
           <div className="mt-4 grid gap-3">
             {game.tools.map((tool) => (
-              <div key={tool} className="rounded-2xl border border-line bg-white p-4">
-                <h3 className="font-semibold">{tool}</h3>
+              <div key={tool.name} className="rounded-2xl border border-line bg-white p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-semibold">{tool.name}</h3>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      tool.status === "Live"
+                        ? "bg-brand/10 text-brand"
+                        : "bg-[#eef5f8] text-muted"
+                    }`}
+                  >
+                    {tool.status}
+                  </span>
+                </div>
                 <p className="mt-2 text-sm leading-6 text-muted">
-                  Build this as a focused helper for players who already chose {game.name} and need
-                  a quick decision while playing.
+                  {tool.summary}
                 </p>
               </div>
             ))}
@@ -235,14 +320,13 @@ export default async function RobloxGamePage({ params }: RobloxGamePageProps) {
         </div>
 
         <div className="rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
-          <h2 className="text-2xl font-bold tracking-tight">Guide Page Ideas</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Guides And Checklists</h2>
           <div className="mt-4 grid gap-3">
             {game.guideIdeas.map((guide) => (
-              <div key={guide} className="rounded-2xl border border-line bg-white p-4">
-                <h3 className="font-semibold">{guide}</h3>
+              <div key={guide.title} className="rounded-2xl border border-line bg-white p-4">
+                <h3 className="font-semibold">{guide.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted">
-                  Use a clear update date, short answer block, comparison table, and internal links
-                  to tools where useful.
+                  {guide.summary}
                 </p>
               </div>
             ))}

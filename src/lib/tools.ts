@@ -304,6 +304,20 @@ export const tools: ToolItem[] = [
     keyword: "roblox game lookup",
   },
   {
+    slug: "roblox-badge-lookup",
+    name: "Roblox Badge Lookup",
+    summary: "Find public Roblox badge details, icon, awarding game, awarded count, and win rate by badge ID.",
+    category: "text-tools",
+    keyword: "roblox badge lookup",
+  },
+  {
+    slug: "roblox-user-groups-lookup",
+    name: "Roblox User Groups Lookup",
+    summary: "Find public Roblox groups and roles for a username or user ID.",
+    category: "text-tools",
+    keyword: "roblox user groups lookup",
+  },
+  {
     slug: "age-calculator",
     name: "Age Calculator",
     summary: "Calculate exact age from a date of birth.",
